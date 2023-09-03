@@ -22,7 +22,7 @@ from analytic_tools import utilities
 To check if the package has been installed correctly, run:
 
 ```
-python3 test/test_utilities.py
+python3 tests/test_utilities.py
 ```
 
 which imports the `utilities` module from `analytic_tools`.
