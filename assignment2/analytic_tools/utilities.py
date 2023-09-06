@@ -4,6 +4,60 @@
 from pathlib import Path
 from typing import Dict, List
 
+# TODO: write the docstrings
+
+def is_directory(p: str | Path):
+    """
+    Is the path pointing to a real object, it the function assumes that it is real?
+    Is the object of the correct type? For example, if you expect a file, the object should be a file and not a directory.
+    If the object is a file, does it have the correct suffix? (.csv is an example of a suffix)
+
+    Expected a directory, but received a file: NotADirectoryError
+    Expected an existing directory, but received a non-existing one: NotADirectoryError
+    Expected parameter of type A, but received of type B: TypeError
+    Expected an argument that has the right type but an inappropriate value: ValueError. For example, if a function expects a .csv file, but receives a .txt files, this exception should be raised.
+    Expected an existing file, but received a non-existing one: FileNotFoundError
+    """
+    if not p.exists:
+        raise RuntimeError("Path does not exsist") # temporary
+    elif not p.is_dir:
+        raise NotADirectoryError
+
+
+"""Implemented some helper-functions to make get_diagnostics simplier"""
+def get_type(p: str | Path) -> str:
+    """Returns the type of the file, based on the fileending (suffix)"""
+    match p.suffix:
+        case '.csv':
+            return '.csv files'
+        case '.txt':
+            return '.txt files'
+        case '.npy':
+            return '.npy files'
+        case '.md':
+            return '.md files'
+        case default:
+            return 'other files'
+
+def DFS(p: str | Path, res: Dict[str, int]) -> Dict[str, int]:
+    """A simple DFS traversal to traverse all subdirectories"""
+    stack = [p]
+    visited = set()
+    while stack:
+        v = stack.pop()
+
+        if v.is_dir():
+            res["subdirectories"] += 1
+            for u in v.iterdir():
+                if u not in visited:
+                    stack.append(u)
+                    visited.add(u)
+        else:
+            res["files"] += 1 # Assuming that directory is not a file
+            res[get_type(v)] += 1
+    
+    return res
+
 
 def get_diagnostics(dir: str | Path) -> Dict[str, int]:
     """Get diagnostics for the directory tree, with root directory pointed to by dir.
@@ -17,9 +71,6 @@ def get_diagnostics(dir: str | Path) -> Dict[str, int]:
 
     """
 
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-
     # Dictionary to return
     res = {
         "files": 0,
@@ -31,17 +82,10 @@ def get_diagnostics(dir: str | Path) -> Dict[str, int]:
         "other files": 0,
     }
 
-    # Remember error handling
-    ...
-
-    # Traverse the directory and find its contents
-    contents = ...
-
-    # Count folders and total num. of files
-    for path in contents:
-        ...
-
-    return res
+    # error handling
+    is_directory(dir)
+    
+    return DFS(Path(dir),res)
 
 
 def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
