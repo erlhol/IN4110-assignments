@@ -18,8 +18,10 @@ def is_directory(p: str | Path):
     Expected an argument that has the right type but an inappropriate value: ValueError. For example, if a function expects a .csv file, but receives a .txt files, this exception should be raised.
     Expected an existing file, but received a non-existing one: FileNotFoundError
     """
-    if not p.exists:
-        raise RuntimeError("Path does not exsist") # temporary
+    if not isinstance(p, (str, Path)):
+        raise TypeError("Expected a path, but received an object that is not path-like")
+    elif not p.exists:
+        raise NotADirectoryError
     elif not p.is_dir:
         raise NotADirectoryError
 
