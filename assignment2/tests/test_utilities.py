@@ -29,9 +29,15 @@ def test_get_diagnostics(example_config):
     Returns:
     None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+    # Assertion of errors?
+    res = get_diagnostics(example_config)
+    assert res["files"] == 10
+    assert res["subdirectories"] == 5
+    assert res[".csv files"] == 8
+    assert res[".txt files"] == 0
+    assert res[".npy files"] == 2
+    assert res[".md files"] == 0
+    assert res["other files"] == 0
 
 
 @pytest.mark.task12

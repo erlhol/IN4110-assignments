@@ -47,9 +47,9 @@ def DFS(p: str | Path, res: Dict[str, int]) -> Dict[str, int]:
     visited = set()
     while stack:
         v = stack.pop()
-
         if v.is_dir():
-            res["subdirectories"] += 1
+            if v != p: # Should not count the first directory
+                res["subdirectories"] += 1
             for u in v.iterdir():
                 if u not in visited:
                     stack.append(u)
@@ -57,7 +57,6 @@ def DFS(p: str | Path, res: Dict[str, int]) -> Dict[str, int]:
         else:
             res["files"] += 1 # Assuming that directory is not a file
             res[get_type(v)] += 1
-    
     return res
 
 
@@ -84,10 +83,11 @@ def get_diagnostics(dir: str | Path) -> Dict[str, int]:
         "other files": 0,
     }
 
+    p = Path(dir)
     # error handling
-    is_directory(dir)
+    is_directory(p)
     
-    return DFS(Path(dir),res)
+    return DFS(p,res)
 
 
 def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
