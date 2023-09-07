@@ -6,26 +6,6 @@ from typing import Dict, List
 
 # TODO: write the docstrings
 
-def is_directory(p: str | Path):
-    """
-    Is the path pointing to a real object, it the function assumes that it is real?
-    Is the object of the correct type? For example, if you expect a file, the object should be a file and not a directory.
-    If the object is a file, does it have the correct suffix? (.csv is an example of a suffix)
-
-    Expected a directory, but received a file: NotADirectoryError
-    Expected an existing directory, but received a non-existing one: NotADirectoryError
-    Expected parameter of type A, but received of type B: TypeError
-    Expected an argument that has the right type but an inappropriate value: ValueError. For example, if a function expects a .csv file, but receives a .txt files, this exception should be raised.
-    Expected an existing file, but received a non-existing one: FileNotFoundError
-    """
-    if not isinstance(p, (str, Path)):
-        raise TypeError("Expected a path, but received an object that is not path-like")
-    elif not p.exists:
-        raise NotADirectoryError
-    elif not p.is_dir:
-        raise NotADirectoryError
-
-
 """Implemented some helper-functions to make get_diagnostics simplier"""
 def get_type(p: str | Path) -> str:
     """Returns the type of the file, based on the fileending (suffix)"""
@@ -82,10 +62,11 @@ def get_diagnostics(dir: str | Path) -> Dict[str, int]:
         ".md files": 0,
         "other files": 0,
     }
-
-    p = Path(dir)
     # error handling
-    is_directory(p)
+
+    p = Path(dir) # Will raise type-error if path is of incorrect type
+    if not p.is_dir():
+        raise NotADirectoryError
     
     return DFS(p,res)
 

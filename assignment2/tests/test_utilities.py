@@ -29,7 +29,6 @@ def test_get_diagnostics(example_config):
     Returns:
     None
     """
-    # Assertion of errors?
     res = get_diagnostics(example_config)
     assert res["files"] == 10
     assert res["subdirectories"] == 5
@@ -45,6 +44,9 @@ def test_get_diagnostics(example_config):
     "exception, dir",
     [
         (NotADirectoryError, "Not_a_real_directory"),
+        (NotADirectoryError,"pollution_data/not_a_directory"),
+        (TypeError,5),
+        (TypeError,False)
         # add more combinations of (exception, dir) here
     ],
 )
@@ -58,10 +60,8 @@ def test_get_diagnostics_exceptions(exception, dir):
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
-
+    with pytest.raises(exception):
+        get_diagnostics(dir)
 
 @pytest.mark.task22
 def test_is_gas_csv():
