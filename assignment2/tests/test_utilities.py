@@ -47,7 +47,6 @@ def test_get_diagnostics(example_config):
         (NotADirectoryError,"pollution_data/not_a_directory"),
         (TypeError,5),
         (TypeError,False)
-        # add more combinations of (exception, dir) here
     ],
 )
 def test_get_diagnostics_exceptions(exception, dir):

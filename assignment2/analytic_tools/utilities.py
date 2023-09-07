@@ -95,11 +95,17 @@ def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-
-    # Print the summary to the terminal
-    ...
+    # Error checking
+    p = Path(dir) # Will raise type-error if path is of incorrect type
+    if not p.is_dir():
+        raise NotADirectoryError
+    if not isinstance(contents,dict):
+        raise TypeError
+    
+    # print to stdout the diagnostics
+    print("Diagnostics for "+str(p)+":")
+    for k,v in contents.items():
+        print("Number of",k+":",v)
 
 
 def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
