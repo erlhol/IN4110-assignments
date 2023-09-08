@@ -3,6 +3,8 @@
 # Include the necessary packages here
 from pathlib import Path
 from typing import Dict, List
+import itertools
+from collections import deque
 
 # TODO: write the docstrings
 
@@ -108,6 +110,34 @@ def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
         print("Number of",k+":",v)
 
 
+# TODO: add docstring
+def DFS_traverse(p: str | Path, maxfiles) -> None:
+    """A simple DFS traversal to traverse all subdirectories"""
+    stack = [(Path(p),0)]
+    visited = set()
+
+    while stack:
+        v, prevlevel = stack.pop()
+        if v == p:
+            print(str(v)+"/")
+        else:
+            print("    "*prevlevel,"-",v)
+        
+        if v.is_dir():
+            file_count = 0
+            for u in v.iterdir():
+                if file_count >= maxfiles:
+                    visited.add(u)
+                    continue
+                
+                if u.is_file():
+                    file_count += 1
+
+                if u not in visited:
+                    stack.append((u,prevlevel + 1))
+                    visited.add(u)        
+    
+
 def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
     """Display a directory tree, with root directory pointed to by dir.
        Limit the number of files to be displayed for convenience to maxfiles.
@@ -121,10 +151,16 @@ def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
         None
 
     """
-    # NOTE: This is a bonus task, if you implementing it, remove `raise NotImplementedError`
-    raise NotImplementedError("Remove me if you implement this bonus task")
+    # Error checking
+    p = Path(dir) # Will raise type-error if path is of incorrect type
+    if not p.is_dir():
+        raise NotADirectoryError
+    if not isinstance(maxfiles,int):
+        raise TypeError
+    if maxfiles < 1:
+        raise ValueError
 
-    ...
+    DFS_traverse(Path(dir),maxfiles)
 
 
 def is_gas_csv(path: str | Path) -> bool:
@@ -218,3 +254,5 @@ def delete_directories(path_list: List[str | Path]) -> None:
     raise NotImplementedError("Remove me if you implement this optional task")
 
     ...
+
+display_directory_tree("/Users/erlingholte/Documents/UiO-master/IN4110/IN3110-erlinhol/assignment2/pollution_data",2)
