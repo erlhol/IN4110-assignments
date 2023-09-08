@@ -3,8 +3,6 @@
 # Include the necessary packages here
 from pathlib import Path
 from typing import Dict, List
-import itertools
-from collections import deque
 
 # TODO: write the docstrings
 
@@ -118,7 +116,7 @@ def DFS_traverse(p: str | Path, maxfiles) -> None:
 
     while stack:
         v, prevlevel = stack.pop()
-        if v == p:
+        if v == p: # if root
             print(str(v)+"/")
         else:
             print("    "*prevlevel,"-",v)
@@ -135,7 +133,7 @@ def DFS_traverse(p: str | Path, maxfiles) -> None:
 
                 if u not in visited:
                     stack.append((u,prevlevel + 1))
-                    visited.add(u)        
+                    visited.add(u)
     
 
 def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
@@ -174,17 +172,18 @@ def is_gas_csv(path: str | Path) -> bool:
     Returns
          - (bool) : Truth value of whether the file is an original gas file
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
 
     # Do correct error handling first
     # Extract the filename from the .csv file and check if it is a valid greenhouse gas
-    ...
+    p = Path(path) # Will raise type-error if path is of incorrect type
+
+    if p.suffix != '.csv':
+        raise ValueError
 
     # List of greenhouse gasses, correct filenames in front of a .csv ending
     gasses = ["CO2", "CH4", "N2O", "SF6", "H2"]
 
-    ...
+    return p.name in gasses
 
 
 def get_dest_dir_from_csv_file(dest_parent: str | Path, file_path: str | Path) -> Path:
@@ -255,4 +254,4 @@ def delete_directories(path_list: List[str | Path]) -> None:
 
     ...
 
-display_directory_tree("/Users/erlingholte/Documents/UiO-master/IN4110/IN3110-erlinhol/assignment2/pollution_data",2)
+display_directory_tree("/Users/erlingholte/Documents/UiO-master/IN4110/IN3110-erlinhol/assignment2/pollution_data",4)
