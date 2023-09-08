@@ -183,7 +183,7 @@ def is_gas_csv(path: str | Path) -> bool:
     # List of greenhouse gasses, correct filenames in front of a .csv ending
     gasses = ["CO2", "CH4", "N2O", "SF6", "H2"]
 
-    return p.name in gasses
+    return p.stem in gasses
 
 
 def get_dest_dir_from_csv_file(dest_parent: str | Path, file_path: str | Path) -> Path:
