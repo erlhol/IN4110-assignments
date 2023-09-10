@@ -72,9 +72,24 @@ def test_is_gas_csv():
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+
+    """
+    You should pretend that you do not know the implementation 
+    of this function and pass several paths with different syntax, 
+    combinations of lowercase/uppercase and even non-alphanumerical characters
+
+    Then you should do sanity checks on the return values (are they of correct type?)
+    """
+    assert is_gas_csv("path/my_path/C02.csv") == False
+    assert is_gas_csv("my_path/CO2.csv") == False
+    assert is_gas_csv("my_path/CO2.csv") == False
+    assert is_gas_csv("my_path/CO2.csv") == False
+
+    assert is_gas_csv("my_path/CH4.csv") == True
+    assert is_gas_csv("my_path/CO2.csv") == True
+    assert is_gas_csv("my_path/N2O.csv") == True
+    assert is_gas_csv("my_path/SF6.csv") == True
+    assert is_gas_csv("my_path/H2.csv") == True
 
 
 @pytest.mark.task22
@@ -82,6 +97,7 @@ def test_is_gas_csv():
     "exception, path",
     [
         (ValueError, Path(__file__).parent.absolute()),
+        (ValueError, 5)
         # add more combinations of (exception, path) here
     ],
 )
@@ -95,9 +111,10 @@ def test_is_gas_csv_exceptions(exception, path):
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+    # Check this once more!!
+    # Will have to extend the check of this test. What does sanitixe mean?
+    with pytest.raises(exception):
+        is_gas_csv(path)
 
 
 @pytest.mark.task24
@@ -111,9 +128,14 @@ def test_get_dest_dir_from_csv_file(example_config):
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+    # Check that it has the correct path, and that that the directory is actually created!
+
+    # H2 file:
+    h2 = Path(example_config) / Path("pollution_data/by_src/src_agriculture/H2.csv")
+    print(h2)
+
+    dest_path = get_dest_dir_from_csv_file(Path("/pollution_data/pollution_data_restructured/by_gas"), h2)
+    print(dest_path)
 
 
 @pytest.mark.task24

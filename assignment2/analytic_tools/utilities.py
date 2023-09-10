@@ -201,24 +201,33 @@ def get_dest_dir_from_csv_file(dest_parent: str | Path, file_path: str | Path) -
         - (pathlib.Path) : Absolute path to the derived directory
 
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
 
     # Do correct error handling first
+    dest_parent = Path(dest_parent) # Will raise type-error if path is of incorrect type
+    file_path = Path(file_path) # Will raise type-error if path is of incorrect type
 
-    ...
+    if not file_path.is_file():
+        raise ValueError
+
+    if not is_gas_csv(file_path):
+        raise ValueError
+
+    if not dest_parent.is_dir():
+        raise NotADirectoryError
+    
 
     # If the input file is valid:
     # Derive the name of the directory, pattern: gas_[gas_formula] directory
-    dest_name = ...
+    dest_name = "gas_"+file_path.stem
     # Derive its absolute path
-    dest_path = ...
+    dest_path = dest_parent / Path(dest_name)
 
     # Check if the directory already exists, and create one of not
     if dest_path.exists():
         return dest_path
-    ...
-
+    
+    dest_path.mkdir()
+    return dest_path
 
 def merge_parent_and_basename(path: str | Path) -> str:
     """This function merges the basename and the parent-name of a path into one, uniting them with "_" character.
