@@ -223,7 +223,7 @@ def get_dest_dir_from_csv_file(dest_parent: str | Path, file_path: str | Path) -
     dest_path = dest_parent / Path(dest_name)
 
     # Check if the directory already exists, and create one of not
-    if dest_path.exists():
+    if dest_path.is_dir():
         return dest_path
     
     dest_path.mkdir()
@@ -239,11 +239,17 @@ def merge_parent_and_basename(path: str | Path) -> str:
     Returns:
         - new_base (str) : New basename of the path
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
+    p = Path(path) # Will raise type-error if path is of incorrect type
+    file_name = p.name
+
+    if p.parent == Path('.'): # Check if there is a parent
+        raise ValueError
+
+    parent_path = Path(p.parent)
+    parent_path_last_name = parent_path.name
 
     # New, merged, basename of the path, which will be the new filename
-    new_base = ...
+    new_base = Path(parent_path_last_name+"_"+file_name)
     return new_base
 
 
@@ -263,4 +269,4 @@ def delete_directories(path_list: List[str | Path]) -> None:
 
     ...
 
-display_directory_tree("/Users/erlingholte/Documents/UiO-master/IN4110/IN3110-erlinhol/assignment2/pollution_data",4)
+#display_directory_tree("/Users/erlingholte/Documents/UiO-master/IN4110/IN3110-erlinhol/assignment2/pollution_data",4)
