@@ -134,6 +134,8 @@ def test_get_dest_dir_from_csv_file(example_config):
     h2 = Path(example_config) / Path("pollution_data/by_src/src_agriculture/H2.csv")
     print(h2)
 
+    # TODO: Fix dest_parent path
+
     dest_path = get_dest_dir_from_csv_file(Path("/pollution_data/pollution_data_restructured/by_gas"), h2)
     print(dest_path)
 
@@ -172,9 +174,9 @@ def test_merge_parent_and_basename():
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+    assert Path('src_agriculture_CO2.csv') == merge_parent_and_basename('/User/.../assignment2/pollution_data/by_src/src_agriculture/CO2.csv')
+    assert Path('some_dir_some_sub_dir') == merge_parent_and_basename('some_dir/some_sub_dir')
+    assert Path('some_dir_some_file.txt') == merge_parent_and_basename('some_dir/some_file.txt')
 
 
 @pytest.mark.task26
@@ -182,6 +184,8 @@ def test_merge_parent_and_basename():
     "exception, path",
     [
         (TypeError, 33),
+        (ValueError, "some_file.txt"),
+        (ValueError, "parentdir/")
         # add more combinations of (exception, path) here
     ],
 )
@@ -195,6 +199,5 @@ def test_merge_parent_and_basename_exceptions(exception, path):
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+    with pytest.raises(exception):
+        merge_parent_and_basename(path)
