@@ -80,16 +80,20 @@ def test_is_gas_csv():
 
     Then you should do sanity checks on the return values (are they of correct type?)
     """
-    assert is_gas_csv("path/my_path/C02.csv") == False
-    assert is_gas_csv("my_path/CO2.csv") == False
-    assert is_gas_csv("my_path/CO2.csv") == False
-    assert is_gas_csv("my_path/CO2.csv") == False
-
-    assert is_gas_csv("my_path/CH4.csv") == True
-    assert is_gas_csv("my_path/CO2.csv") == True
-    assert is_gas_csv("my_path/N2O.csv") == True
-    assert is_gas_csv("my_path/SF6.csv") == True
-    assert is_gas_csv("my_path/H2.csv") == True
+    false_tests = ["path/my_path/C02.csv","path/my_path/name.csv","CO2_WSn.csv",
+                   "N2O_hIU.csv","CH2.csv","aDiReCtOrYwItHuPpErAnDlOwErCaSe/GiBBerish.csv"]
+    for test in false_tests:
+        res = is_gas_csv(test)
+        assert isinstance(res,bool)
+        assert res == False
+    
+    true_tests = ["aDiReCtOrYwItHuPpErAnDlOwErCaSe/CO2.csv", "&:@~/CH4.csv", "my_path/CO2.csv",
+                  "CH4.csv", "SF6.csv", "my_path/CH4.csv", "my_path/CO2.csv", "my_path/N2O.csv",
+                  "my_path/SF6.csv", "my_path/H2.csv"]
+    for test in true_tests:
+        res = is_gas_csv(test)
+        assert isinstance(res,bool)
+        assert res == True
 
 
 @pytest.mark.task22
@@ -97,7 +101,10 @@ def test_is_gas_csv():
     "exception, path",
     [
         (ValueError, Path(__file__).parent.absolute()),
-        (ValueError, 5)
+        (TypeError, 5),
+        (ValueError, Path("my_path/SF6.npy")),
+        (TypeError, False)
+
         # add more combinations of (exception, path) here
     ],
 )
@@ -132,12 +139,18 @@ def test_get_dest_dir_from_csv_file(example_config):
 
     # H2 file:
     h2 = Path(example_config) / Path("pollution_data/by_src/src_agriculture/H2.csv")
-    print(h2)
 
-    # TODO: Fix dest_parent path
+    # relative path: pollution_data_restructured/by_gas
+    parent_dir = Path(__file__).parents[1].absolute()
 
-    dest_path = get_dest_dir_from_csv_file(Path("/pollution_data/pollution_data_restructured/by_gas"), h2)
-    print(dest_path)
+    dest_path = get_dest_dir_from_csv_file(parent_dir / Path("pollution_data_restructured/by_gas"), h2)
+
+    """
+    You must check that the function returns the correct path for each directory and
+    that it creates the corresponding directory inside the temporary directory tree.
+    """
+
+    
 
 
 @pytest.mark.task24
