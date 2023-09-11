@@ -5,8 +5,7 @@
 
 # Import necessary packages here
 from pathlib import Path
-from analytic_tools.utilities import *
-from analytic_tools.plotting import *
+from analytic_tools import utilities,plotting
 
 def restructure_pollution_data(pollution_dir: str | Path, dest_dir: str | Path) -> None:
     """This function searches the tree of pollution_data directory pointed to by pollution_dir for .csv files
