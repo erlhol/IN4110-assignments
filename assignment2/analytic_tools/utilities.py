@@ -125,7 +125,10 @@ def DFS_traverse(p: str | Path, maxfiles) -> None:
             file_count = 0
             for u in v.iterdir():
                 if u.is_file() and file_count >= maxfiles: # must be a file, to not ignore directories
+                    if file_count == maxfiles:
+                        stack.append((Path("..."),prevlevel + 1))
                     visited.add(u)
+                    file_count += 1
                     continue
 
                 if u.is_file():
@@ -269,4 +272,4 @@ def delete_directories(path_list: List[str | Path]) -> None:
 
     ...
 
-display_directory_tree("/Users/erlingholte/Documents/UiO-master/IN4110/IN3110-erlinhol/assignment2/pollution_data",1)
+display_directory_tree("/Users/erlingholte/Documents/UiO-master/IN4110/IN3110-erlinhol/assignment2/pollution_data",2)
