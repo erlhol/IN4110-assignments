@@ -6,6 +6,7 @@
 # Import necessary packages here
 from pathlib import Path
 from analytic_tools import utilities, plotting
+import shutil
 
 def restructure_pollution_data(pollution_dir: str | Path, dest_dir: str | Path) -> None:
     """This function searches the tree of pollution_data directory pointed to by pollution_dir for .csv files
@@ -27,17 +28,22 @@ def restructure_pollution_data(pollution_dir: str | Path, dest_dir: str | Path) 
     4. Assign a new name using `merge_parent_and_basename` and copy the file to the new destination.
        If the file happens already to exist there, it should be overwritten.
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
 
     # Do the correct error handling first
-    ...
+    pollution_dir = Path(pollution_dir) # Will raise type-error if path is of incorrect type
+    dest_dir = Path(dest_dir) # Will raise type-error if path is of incorrect type
+
+    if (not pollution_dir.is_dir()) or (not dest_dir.is_dir()):
+        raise NotADirectoryError
 
     # Contents of pollution_data tree
-    contents = ...
+    contents = pollution_dir.glob('**/*')
 
     for path in contents:
-        ...
+        if utilities.is_gas_csv(path):
+            derived_dir = utilities.get_dest_dir_from_csv_file(dest_dir,path) # will also create the dir
+            new_path = utilities.merge_parent_and_basename(derived_dir)
+            shutil.copyfile(path,new_path)
 
 
 def analyze_pollution_data(work_dir: str | Path) -> None:
