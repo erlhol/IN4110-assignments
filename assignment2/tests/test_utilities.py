@@ -161,6 +161,11 @@ def test_get_dest_dir_from_csv_file(example_config):
     "exception, dest_parent, file_path",
     [
         (ValueError, Path(__file__).parent.absolute(), "foo.txt"),
+        (ValueError, Path(__file__).parent.absolute(), "sub_dir/dir"),
+        (TypeError,5,10),
+        (TypeError,2,"a_path"),
+        (TypeError,"a_path/sub_dir",1),
+        (NotADirectoryError,"not_a_directory/still_not_a_directory",Path(__file__).parents[1].absolute() / Path("pollution_data/by_src/src_agriculture/N2O.csv"))
         # add more combinations of (exception, dest_parent, file_path) here
     ],
 )
@@ -175,9 +180,8 @@ def test_get_dest_dir_from_csv_file_exceptions(exception, dest_parent, file_path
     Returns:
         None
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
-    ...
+    with pytest.raises(exception):
+        get_dest_dir_from_csv_file(dest_parent,file_path)
 
 
 @pytest.mark.task26
