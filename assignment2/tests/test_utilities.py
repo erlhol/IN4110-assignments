@@ -135,22 +135,25 @@ def test_get_dest_dir_from_csv_file(example_config):
     Returns:
         None
     """
-    # Check that it has the correct path, and that that the directory is actually created!
 
-    # H2 file:
-    h2 = Path(example_config) / Path("pollution_data/by_src/src_agriculture/H2.csv")
-
-    # relative path: pollution_data_restructured/by_gas
     parent_dir = Path(__file__).parents[1].absolute()
+    restructured_path = parent_dir / Path("pollution_data_restructured/by_gas")
 
-    dest_path = get_dest_dir_from_csv_file(parent_dir / Path("pollution_data_restructured/by_gas"), h2)
+    # H2:
+    h2 = Path(example_config) / Path("pollution_data/by_src/src_agriculture/H2.csv")
+    co2 = Path(example_config) / Path("pollution_data/by_src/src_airtraffic/CO2.csv")
+    co2_2 = Path(example_config) / Path("pollution_data/by_src/src_oil_and_gass/CO2.csv")
+    ch4 = Path(example_config) / Path("pollution_data/by_src/src_oil_and_gass/CH4.csv")
 
-    """
-    You must check that the function returns the correct path for each directory and
-    that it creates the corresponding directory inside the temporary directory tree.
-    """
+    dest_path1 = get_dest_dir_from_csv_file(restructured_path, h2)
+    dest_path2 = get_dest_dir_from_csv_file(restructured_path, co2)
+    dest_path3 = get_dest_dir_from_csv_file(restructured_path, co2_2)
+    dest_path4 = get_dest_dir_from_csv_file(restructured_path, ch4)
 
-    
+    assert dest_path1 == (parent_dir / Path('pollution_data_restructured/by_gas/gas_H2')) and dest_path1.is_dir()
+    assert dest_path2 == (parent_dir / Path('pollution_data_restructured/by_gas/gas_CO2')) and dest_path2.is_dir()
+    assert dest_path3 == (parent_dir / Path('pollution_data_restructured/by_gas/gas_CO2')) and dest_path3.is_dir()
+    assert dest_path4 == (parent_dir / Path('pollution_data_restructured/by_gas/gas_CH4')) and dest_path4.is_dir()
 
 
 @pytest.mark.task24
