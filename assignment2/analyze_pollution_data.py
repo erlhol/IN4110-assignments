@@ -40,7 +40,7 @@ def restructure_pollution_data(pollution_dir: str | Path, dest_dir: str | Path) 
     contents = pollution_dir.glob('**/*')
 
     for path in contents:
-        if utilities.is_gas_csv(path):
+        if path.suffix == '.csv' and utilities.is_gas_csv(path):
             derived_dir = utilities.get_dest_dir_from_csv_file(dest_dir,path) # will also create the dir
             new_path = utilities.merge_parent_and_basename(derived_dir)
             shutil.copyfile(path,new_path)
