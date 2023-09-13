@@ -1,8 +1,6 @@
 """This is the main script orchestrating the restructuring and plotting of the content of the pollution_data directory.
 """
 
-# TODO:
-
 # Import necessary packages here
 from pathlib import Path
 from analytic_tools import utilities, plotting
