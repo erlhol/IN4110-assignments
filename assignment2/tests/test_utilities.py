@@ -136,8 +136,8 @@ def test_get_dest_dir_from_csv_file(example_config):
         None
     """
 
-    parent_dir = Path(__file__).parents[1].absolute()
-    restructured_path = parent_dir / Path("pollution_data_restructured/by_gas")
+    restructured_path = Path(example_config) / Path("pollution_data_restructured/by_gas")
+    restructured_path.mkdir(parents=True)
 
     # H2:
     h2 = Path(example_config) / Path("pollution_data/by_src/src_agriculture/H2.csv")
@@ -150,10 +150,10 @@ def test_get_dest_dir_from_csv_file(example_config):
     dest_path3 = get_dest_dir_from_csv_file(restructured_path, co2_2)
     dest_path4 = get_dest_dir_from_csv_file(restructured_path, ch4)
 
-    assert dest_path1 == (parent_dir / Path('pollution_data_restructured/by_gas/gas_H2')) and dest_path1.is_dir()
-    assert dest_path2 == (parent_dir / Path('pollution_data_restructured/by_gas/gas_CO2')) and dest_path2.is_dir()
-    assert dest_path3 == (parent_dir / Path('pollution_data_restructured/by_gas/gas_CO2')) and dest_path3.is_dir()
-    assert dest_path4 == (parent_dir / Path('pollution_data_restructured/by_gas/gas_CH4')) and dest_path4.is_dir()
+    assert dest_path1 == (Path(example_config) / Path('pollution_data_restructured/by_gas/gas_H2')) and dest_path1.is_dir()
+    assert dest_path2 == (Path(example_config) / Path('pollution_data_restructured/by_gas/gas_CO2')) and dest_path2.is_dir()
+    assert dest_path3 == (Path(example_config) / Path('pollution_data_restructured/by_gas/gas_CO2')) and dest_path3.is_dir()
+    assert dest_path4 == (Path(example_config) / Path('pollution_data_restructured/by_gas/gas_CH4')) and dest_path4.is_dir()
 
 
 @pytest.mark.task24
