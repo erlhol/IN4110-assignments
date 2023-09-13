@@ -7,8 +7,18 @@ from typing import Dict, List
 # TODO: write the docstrings
 
 """Implemented some helper-functions to make get_diagnostics simplier"""
+
 def get_type(p: str | Path) -> str:
-    """Returns the type of the file, based on the fileending (suffix)"""
+    """Get the type based on the suffix of the file pointed to by path p.
+
+    Parameters:
+        p (str or pathlib.Path) : Absolute path to the file of interest
+
+    Returns:
+        str : A string representation of the type of file (the suffix) pointed to by path p. 
+        All other files will be tagged as 'other files'
+
+    """
     match p.suffix:
         case '.csv':
             return '.csv files'
@@ -23,8 +33,18 @@ def get_type(p: str | Path) -> str:
 
 # Can use pollution_dir.glob('**/*') instead!
 # Refactor when done with program
-def DFS(p: str | Path, res: Dict[str, int]) -> Dict[str, int]:
-    """A simple DFS traversal to traverse all subdirectories"""
+def get_dictionary_about_subdirectories(p: str | Path, res: Dict[str, int]) -> Dict[str, int]:
+    """Get a dictionary of the files in the subdirectories pointed to by the path p
+
+    Parameters:
+        p (str or pathlib.Path) : Absolute path to the file of interest
+        res (Dict[str, int]) :  a dictionary with values set to 0 with the following keys: files, subdirectories, .csv files, .txt files, .npy files, .md files, other files.
+
+    Returns:
+        res (Dict[str, int]) :  a dictionary of the findings with following keys: files, subdirectories, .csv files, .txt files, .npy files, .md files, other files.
+
+
+    """
     stack = [p]
     visited = set()
     while stack:
@@ -70,7 +90,7 @@ def get_diagnostics(dir: str | Path) -> Dict[str, int]:
     if not p.is_dir():
         raise NotADirectoryError
     
-    return DFS(p,res)
+    return get_dictionary_about_subdirectories(p,res)
 
 
 def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
@@ -108,11 +128,30 @@ def display_diagnostics(dir: str | Path, contents: Dict[str, int]) -> None:
     print("Diagnostics for "+str(p)+":")
     for k,v in contents.items():
         print("Number of",k+":",v)
+    
 
+def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
+    """Display a directory tree, with root directory pointed to by dir.
+       Limit the number of files to be displayed for convenience to maxfiles.
+       This tree is built with inspiration from the code written by "Flimm" at https://stackoverflow.com/questions/6639394/what-is-the-python-way-to-walk-a-directory-tree
 
-# TODO: add docstring
-def DFS_traverse(p: str | Path, maxfiles) -> None:
-    """A simple DFS traversal to traverse all subdirectories"""
+    Parameters:
+        dir (str or pathlib.Path) : Absolute path to the directory of interest
+        maxfiles (int) : Maximum number of files to be displayed at each level in the tree, default to three.
+
+    Returns:
+        None
+
+    """
+    # Error checking
+    p = Path(dir) # Will raise type-error if path is of incorrect type
+    if not p.is_dir():
+        raise NotADirectoryError
+    if not isinstance(maxfiles,int):
+        raise TypeError
+    if maxfiles < 1:
+        raise ValueError
+
     stack = [(Path(p),0)]
     visited = set()
 
@@ -139,32 +178,6 @@ def DFS_traverse(p: str | Path, maxfiles) -> None:
                 if u not in visited:
                     stack.append((u,prevlevel + 1))
                     visited.add(u)
-    
-
-def display_directory_tree(dir: str | Path, maxfiles: int = 3) -> None:
-    """Display a directory tree, with root directory pointed to by dir.
-       Limit the number of files to be displayed for convenience to maxfiles.
-       This tree is built with inspiration from the code written by "Flimm" at https://stackoverflow.com/questions/6639394/what-is-the-python-way-to-walk-a-directory-tree
-
-    Parameters:
-        dir (str or pathlib.Path) : Absolute path to the directory of interest
-        maxfiles (int) : Maximum number of files to be displayed at each level in the tree, default to three.
-
-    Returns:
-        None
-
-    """
-    # Error checking
-    p = Path(dir) # Will raise type-error if path is of incorrect type
-    if not p.is_dir():
-        raise NotADirectoryError
-    if not isinstance(maxfiles,int):
-        raise TypeError
-    if maxfiles < 1:
-        raise ValueError
-
-    DFS_traverse(Path(dir),maxfiles)
-
 
 def is_gas_csv(path: str | Path) -> bool:
     """Checks if a csv file pointed to by path is an original gas statistics file.

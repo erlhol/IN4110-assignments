@@ -2,8 +2,6 @@
     which is a part of the analytic_tools package
 """
 
-# TODO:
-
 # Include the necessary packages here
 from pathlib import Path
 
