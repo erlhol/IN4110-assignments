@@ -88,8 +88,7 @@ def analyze_pollution_data(work_dir: str | Path) -> None:
     figures_dir.mkdir(exist_ok=True)
 
     # Make a call to plot_pollution_data
-    for dir in by_gas_dir.iterdir():
-        plotting.create_plot(dir,figures_dir)
+    plotting.plot_pollution_data(by_gas_dir,figures_dir)
 
 
 def analyze_pollution_data_tmp(work_dir: str | Path) -> None:
@@ -130,9 +129,9 @@ def analyze_pollution_data_tmp(work_dir: str | Path) -> None:
     # Populate pollution_data_restructured with a sub folder named figures
     figures_dir = work_dir / Path("figures")
     figures_dir.mkdir(exist_ok=True)
-    print(figures_dir)
-    for dir in by_gas_dir.iterdir():
-        plotting.create_plot(dir,figures_dir)
+    
+    # Make a call to plot_pollution_data
+    plotting.plot_pollution_data(by_gas_dir,figures_dir)
     
     # Delete tmp_directory
     shutil.rmtree(tmp_directory)
