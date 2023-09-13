@@ -70,10 +70,8 @@ def analyze_pollution_data(work_dir: str | Path) -> None:
     if not work_dir.is_dir():
         raise NotADirectoryError
 
-    #utilities.display_diagnostics(work_dir,utilities.get_diagnostics(work_dir))
-    #utilities.display_directory_tree(work_dir)
-
-    print(work_dir)
+    utilities.display_diagnostics(work_dir,utilities.get_diagnostics(work_dir))
+    utilities.display_directory_tree(work_dir)
 
     # Create pollution_data_restructured in work_dir
     pollution_dir = work_dir / Path("pollution_data")
@@ -93,7 +91,6 @@ def analyze_pollution_data(work_dir: str | Path) -> None:
 
     # Make a call to plot_pollution_data
     for dir in by_gas_dir.iterdir():
-        print(dir)
         plotting.create_plot(dir,figures_dir)
 
 
@@ -114,16 +111,38 @@ def analyze_pollution_data_tmp(work_dir: str | Path) -> None:
     - Perform the same operations as in analyze_pollution_data
     - Copy (or directly save) the figures to a directory named `figures` under the original working directory pointed to by `work_dir`
     """
+    # Error handling
+    work_dir = Path(work_dir)
+    if not work_dir.is_dir():
+        raise NotADirectoryError
+    
+    # Create temporary directory
+    tmp_directory = work_dir / Path("tmp_dir")
+    tmp_directory.mkdir(exist_ok=True)
 
-    # NOTE: This is a bonus task, if you are skipping it, remove `raise NotImplementedError()`
-    # in the function body
-    raise NotImplementedError("Remove me if you implement this optional task")
+    # Path to pollution_data
+    pollution_dir = work_dir / Path("pollution_data")
 
-    ...
+    # Populate it with a by_gas sub-folder
+    by_gas_dir = tmp_directory / Path("by_gas")
+    by_gas_dir.mkdir(exist_ok=True)
+
+    restructure_pollution_data(pollution_dir,by_gas_dir)
+
+    # Populate pollution_data_restructured with a sub folder named figures
+    figures_dir = work_dir / Path("figures")
+    figures_dir.mkdir(exist_ok=True)
+    print(figures_dir)
+    for dir in by_gas_dir.iterdir():
+        plotting.create_plot(dir,figures_dir)
+    
+    # Delete tmp_directory
+    shutil.rmtree(tmp_directory)
 
 
 if __name__ == "__main__":
     # Create a variable holding the path to your working directory
     work_dir = Path(__file__).parent
     # Make a call to analyze_pollution_data
-    analyze_pollution_data(work_dir)
+    #analyze_pollution_data(work_dir)
+    analyze_pollution_data_tmp(work_dir)
