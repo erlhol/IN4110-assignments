@@ -41,10 +41,10 @@ def restructure_pollution_data(pollution_dir: str | Path, dest_dir: str | Path) 
 
     for path in contents:
         if path.suffix == '.csv' and utilities.is_gas_csv(path):
-            derived_dir = utilities.get_dest_dir_from_csv_file(dest_dir,path) # will also create the dir
-            new_path = utilities.merge_parent_and_basename(derived_dir)
-            shutil.copyfile(path,new_path)
-
+            dest_derived_dir = utilities.get_dest_dir_from_csv_file(dest_dir,path) # will also create the dir
+            file_name = utilities.merge_parent_and_basename(path)
+            full_path = dest_derived_dir / Path(file_name)
+            shutil.copy(path,full_path)
 
 def analyze_pollution_data(work_dir: str | Path) -> None:
     """Do the restructuring of the pollution_data and plot
@@ -65,27 +65,36 @@ def analyze_pollution_data(work_dir: str | Path) -> None:
     - Populate pollution_data_restructured with a subdirectory named figures
     - Make a call to plot_pollution_data
     """
-    # Remove if you implement this task
-    raise NotImplementedError("Remove me if you implement this mandatory task")
+    # Error handling
+    work_dir = Path(work_dir)
+    if not work_dir.is_dir():
+        raise NotADirectoryError
+
+    #utilities.display_diagnostics(work_dir,utilities.get_diagnostics(work_dir))
+    #utilities.display_directory_tree(work_dir)
+
+    print(work_dir)
 
     # Create pollution_data_restructured in work_dir
-    pollution_dir = work_dir / "pollution_data"
-    restructured_dir = work_dir / "pollution_data_restructured"
-    ...
+    pollution_dir = work_dir / Path("pollution_data")
+    restructured_dir = work_dir / Path("pollution_data_restructured")
+    restructured_dir.mkdir(exist_ok=True)
 
     # Populate it with a by_gas sub-folder
-    by_gas_dir = restructured_dir / "by_gas"
-    ...
+    by_gas_dir = restructured_dir / Path("by_gas")
+    by_gas_dir.mkdir(exist_ok=True)
 
     # Make a call to restructure_pollution_data
-    ...
+    restructure_pollution_data(pollution_dir,by_gas_dir)
 
     # Populate pollution_data_restructured with a sub folder named figures
-    figures_dir = restructured_dir / "figures"
-    ...
+    figures_dir = restructured_dir / Path("figures")
+    figures_dir.mkdir(exist_ok=True)
 
     # Make a call to plot_pollution_data
-    ...
+    for dir in by_gas_dir.iterdir():
+        print(dir)
+        plotting.create_plot(dir,figures_dir)
 
 
 def analyze_pollution_data_tmp(work_dir: str | Path) -> None:
@@ -115,6 +124,6 @@ def analyze_pollution_data_tmp(work_dir: str | Path) -> None:
 
 if __name__ == "__main__":
     # Create a variable holding the path to your working directory
-    work_dir = ...
+    work_dir = Path(__file__).parent
     # Make a call to analyze_pollution_data
-    ...
+    analyze_pollution_data(work_dir)
