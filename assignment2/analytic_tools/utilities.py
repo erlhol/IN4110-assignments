@@ -21,6 +21,8 @@ def get_type(p: str | Path) -> str:
         case default:
             return 'other files'
 
+# Can use pollution_dir.glob('**/*') instead!
+# Refactor when done with program
 def DFS(p: str | Path, res: Dict[str, int]) -> Dict[str, int]:
     """A simple DFS traversal to traverse all subdirectories"""
     stack = [p]
@@ -217,7 +219,6 @@ def get_dest_dir_from_csv_file(dest_parent: str | Path, file_path: str | Path) -
 
     if not dest_parent.is_dir():
         raise NotADirectoryError
-    
 
     # If the input file is valid:
     # Derive the name of the directory, pattern: gas_[gas_formula] directory
@@ -271,5 +272,3 @@ def delete_directories(path_list: List[str | Path]) -> None:
     raise NotImplementedError("Remove me if you implement this optional task")
 
     ...
-
-display_directory_tree("/Users/erlingholte/Documents/UiO-master/IN4110/IN3110-erlinhol/assignment2/pollution_data",2)
