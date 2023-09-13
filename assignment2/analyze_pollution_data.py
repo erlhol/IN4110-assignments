@@ -144,4 +144,4 @@ if __name__ == "__main__":
     # Create a variable holding the path to your working directory
     work_dir = Path(__file__).parent
     # Make a call to analyze_pollution_data
-    analyze_pollution_data_tmp(work_dir)
+    analyze_pollution_data(work_dir)
