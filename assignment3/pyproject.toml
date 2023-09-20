@@ -1,0 +1,25 @@
+[build-system]
+requires = [
+    "setuptools>=61",
+    "cython>=3"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+version = "1.0.0"
+requires-python = ">=3.8"
+license = {text = "MIT License"}
+name = "in3110_instapy"
+description = "image filters in Python"
+readme = "README.md"
+dependencies = [
+    "numpy",
+    "pillow",
+    "numba",
+    "line_profiler"
+
+]
+
+
+[project.scripts]
+instapy = "in3110_instapy.module:function"
