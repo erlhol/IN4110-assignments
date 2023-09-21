@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import numpy as np
 
-
 def numpy_color2gray(image: np.array) -> np.array:
     """Convert rgb pixel array to grayscale
 
@@ -14,10 +13,13 @@ def numpy_color2gray(image: np.array) -> np.array:
     """
 
     gray_image = np.empty_like(image)
-
     # Hint: use numpy slicing in order to have fast vectorized code
-    ...
+    gray_scale = image[:,:,0] * 0.21 + image[:,:,1] * 0.72 + image[:,:,2] * 0.07
+    gray_image[:,:,0] = gray_scale
+    gray_image[:,:,1] = gray_scale
+    gray_image[:,:,2] = gray_scale
     # Return image (make sure it's the right type!)
+    gray_image = gray_image.astype("uint8")
     return gray_image
 
 
