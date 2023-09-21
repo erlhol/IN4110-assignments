@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import numpy as np
-from PIL import Image
 
 def python_color2gray(image: np.array) -> np.array:
     """Convert rgb pixel array to grayscale
