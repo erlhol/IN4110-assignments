@@ -1,7 +1,7 @@
 from setuptools import setup
 
 # IN4110: set to True when you are ready for the Cython implementation
-use_cython = False
+use_cython = True
 
 
 if use_cython:
