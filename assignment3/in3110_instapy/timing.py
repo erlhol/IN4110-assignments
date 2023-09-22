@@ -5,6 +5,8 @@ from typing import Callable
 
 from . import get_filter, io
 
+from PIL import Image
+import numpy as np
 
 def time_one(filter_function: Callable, *arguments, calls: int = 3) -> float:
     """Return the time for one call
@@ -26,10 +28,16 @@ def time_one(filter_function: Callable, *arguments, calls: int = 3) -> float:
     """
     # run the filter function `calls` times
     # return the _average_ time of one call
-    ...
+    times = []
+    for _ in range(calls):
+        start_time = time.time()
+        filter_function(*arguments)
+        end_time = time.time()
+        times.append(end_time-start_time)
+    return sum(times) / len(times)
 
 
-def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
+def make_reports(filename: str = "test/big.jpeg", calls: int = 3):
     """
     Make timing reports for all implementations and filters,
     run for a given image.
@@ -39,25 +47,26 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
     """
 
     # load the image
-    image = ...
+    image = Image.open(filename)
+    image = np.asarray(image)
     # iterate through the filters
-    filter_names = ...
+    filter_names = ["color2gray"]
     for filter_name in filter_names:
         # get the reference filter function
-        reference_filter = ...
+        reference_filter = get_filter(filter_name)
         # time the reference implementation
-        reference_time = ...
+        reference_time = time_one(reference_filter,image)
         print(
             f"Reference (pure Python) filter time {filter_name}: {reference_time:.3}s ({calls=})"
         )
         # iterate through the implementations
-        implementations = ...
+        implementations = ["numpy","cython","numba"]
         for implementation in implementations:
-            filter = ...
+            filter = get_filter(filter_name,implementation)
             # time the filter
-            filter_time = ...
+            filter_time = time_one(filter,image)
             # compare the reference time to the optimized time
-            speedup = ...
+            speedup = reference_time / filter_time
             print(
                 f"Timing: {implementation} {filter_name}: {filter_time:.3}s ({speedup=:.2f}x)"
             )
