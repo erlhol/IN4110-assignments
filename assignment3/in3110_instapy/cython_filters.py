@@ -58,4 +58,37 @@ def cython_color2sepia(image):
     Returns:
         np.array: gray_image
     """
-    ...
+    sepia_image = np.empty_like(image)
+
+    r_0: C.float = 0.393
+    r_1: C.float = 0.769
+    r_2: C.float = 0.189
+
+    g_0: C.float = 0.349
+    g_1: C.float = 0.686
+    g_2: C.float = 0.168
+
+    b_0: C.float = 0.272
+    b_1: C.float = 0.534
+    b_2: C.float = 0.131
+
+    # iterate through the pixels, and apply the grayscale transform
+    
+    # The grayscale transform will have the weights 0.21, 0.72 and 0.07
+    shape = sepia_image.shape
+    h: C.int = shape[0]
+    w: C.int = shape[1]
+
+    for i in range(h):
+        for j in range(w):
+            pixel = sepia_image[i][j]
+            pixel_real = image[i][j]
+            r_p: C.int = pixel_real[0]
+            g_p: C.int = pixel_real[1]
+            b_p: C.int = pixel_real[2]
+
+            pixel[0] = min(255,int(r_p * r_0 + g_p * r_1 + b_p * r_2))
+            pixel[1] = min(255,int(r_p * g_0 + g_p * g_1 + b_p * g_2))
+            pixel[2] = min(255,int(r_p * b_0 + g_p * b_1 + b_p * b_2))
+
+    return sepia_image
