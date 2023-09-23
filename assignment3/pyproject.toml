@@ -22,4 +22,4 @@ dependencies = [
 
 
 [project.scripts]
-instapy = "in3110_instapy.module:function"
+instapy = "in3110_instapy.cli:main"
