@@ -50,7 +50,7 @@ def make_reports(filename: str = "test/big.jpeg", calls: int = 3):
     image = Image.open(filename)
     image = np.asarray(image)
     # iterate through the filters
-    filter_names = ["color2gray"]
+    filter_names = ["color2gray","color2sepia"]
     for filter_name in filter_names:
         # get the reference filter function
         reference_filter = get_filter(filter_name)
