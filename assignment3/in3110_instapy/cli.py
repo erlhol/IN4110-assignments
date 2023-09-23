@@ -20,17 +20,18 @@ def run_filter(
 ) -> None:
     """Run the selected filter"""
     # load the image from a file
-    image = ...
+    image = Image.open(file)
     if scale != 1:
         # Resize image, if needed
-        ...
+        (width, height) = (image.width // scale, image.height // scale)
+        image = image.resize((width, height))
 
     # Apply the filter
-    ...
-    filtered = ...
+    filter_fun = in3110_instapy.get_filter(filter,implementation)
+    filtered = filter_fun(image)
     if out_file:
         # save the file
-        ...
+        io.write_image(filtered,out_file)
     else:
         # not asked to save, display it instead
         io.display(filtered)
@@ -48,7 +49,14 @@ def main(argv=None):
     parser.add_argument("-o", "--out", help="The output filename")
 
     # Add required arguments
-    ...
+    parser.add_argument("-g","--gray",help="Select gray filter",action='store_true')
+    parser.add_argument("-se","--sepia",help="Select sepia filter",action='store_true')
+    parser.add_argument("-sc","--scale", type=int , help="Scale factor to resize image")
+    parser.add_argument("-i","--implementation", choices=["python", "numba", "numpy","cython"],help="The implementation")
 
     # parse arguments and call run_filter
-    ...
+    args = parser.parse_args()
+    if args.gray == True:
+        run_filter(args.file,args.out,args.implementation,"color2gray",args.scale)
+    if args.sepia == True:
+        run_filter(args.file,args.out,args.implementation,"color2sepia",args.scale)
