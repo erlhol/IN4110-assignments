@@ -44,18 +44,25 @@ def numpy_color2sepia(image: np.array, k: float = 1) -> np.array:
         # validate k (optional)
         raise ValueError(f"k must be between [0-1], got {k=}")
 
-    sepia_image = ...
+    sepia_image = np.empty_like(image)
 
     # define sepia matrix (optional: with stepless sepia changes)
-    sepia_matrix = ...
+    sepia_matrix = [
+    [ 0.393, 0.769, 0.189], # R
+    [ 0.349, 0.686, 0.168], # G
+    [ 0.272, 0.534, 0.131], # B
+    ]
 
     # HINT: For version without adaptive sepia filter, use the same matrix as in the pure python implementation
     # use Einstein sum to apply pixel transform matrix
     # Apply the matrix filter
-    sepia_image = ...
+
+    sepia_image[:,:,0] = np.minimum(255,image[:,:,0] * sepia_matrix[0][0] + image[:,:,1] * sepia_matrix[0][1] + image[:,:,2] * sepia_matrix[0][2])
+    sepia_image[:,:,1] = np.minimum(255,image[:,:,0] * sepia_matrix[1][0] + image[:,:,1] * sepia_matrix[1][1] + image[:,:,2] * sepia_matrix[1][2])
+    sepia_image[:,:,2] = np.minimum(255,image[:,:,0] * sepia_matrix[2][0] + image[:,:,1] * sepia_matrix[2][1] + image[:,:,2] * sepia_matrix[2][2])
 
     # Check which entries have a value greater than 255 and set it to 255 since we can not display values bigger than 255
-    ...
 
     # Return image (make sure it's the right type!)
+    sepia_image = sepia_image.astype("uint8")
     return sepia_image
