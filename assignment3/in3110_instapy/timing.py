@@ -5,9 +5,6 @@ from typing import Callable
 
 from . import get_filter, io
 
-from PIL import Image
-import numpy as np
-
 def time_one(filter_function: Callable, *arguments, calls: int = 3) -> float:
     """Return the time for one call
 
@@ -47,8 +44,7 @@ def make_reports(filename: str = "test/big.jpeg", calls: int = 3):
     """
 
     # load the image
-    image = Image.open(filename)
-    image = np.asarray(image)
+    image = io.read_image(filename)
     # iterate through the filters
     filter_names = ["color2gray","color2sepia"]
     for filter_name in filter_names:
