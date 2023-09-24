@@ -23,7 +23,7 @@ def run_filter(
     image = Image.open(file)
     if scale != 1:
         # Resize image, if needed
-        (width, height) = (image.width // scale, image.height // scale)
+        (width, height) = (round(image.width * scale), round(image.height * scale))
         image = image.resize((width, height))
 
     # Apply the filter
