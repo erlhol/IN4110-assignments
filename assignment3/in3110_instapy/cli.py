@@ -65,8 +65,7 @@ def main(argv=None):
             runtime_args.append(args.scale)
 
         runtime = timing.time_one(run_filter, *runtime_args)
-        if args.scale is not None:
-            print(f"Average time over 3 runs: {runtime}s")
+        print(f"Average time over 3 runs: {runtime}s")
     else:
         run_args = [args.file, args.out, args.implementation, chosen_filter]
         if args.scale is not None:
