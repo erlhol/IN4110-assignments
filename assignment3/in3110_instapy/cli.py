@@ -52,7 +52,7 @@ def main(argv=None):
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("-g","--gray",help="Select gray filter",action='store_true')
     group.add_argument("-se","--sepia",help="Select sepia filter",action='store_true')
-    parser.add_argument("-sc","--scale", type=int , help="Scale factor to resize image")
+    parser.add_argument("-sc","--scale", type=float , help="Scale factor to resize image")
     parser.add_argument("-i","--implementation", choices=["python", "numba", "numpy","cython"],help="The implementation",required=True)
     parser.add_argument("-r","--runtime",help="Track the average runtime",action='store_true')
     args = parser.parse_args()
