@@ -8,8 +8,7 @@ import in3110_instapy
 import numpy as np
 from PIL import Image
 
-from . import io
-
+from . import io, timing
 
 def run_filter(
     file: str,
@@ -27,6 +26,7 @@ def run_filter(
         image = image.resize((width, height))
 
     # Apply the filter
+    image = np.asarray(image)
     filter_fun = in3110_instapy.get_filter(filter,implementation)
     filtered = filter_fun(image)
     if out_file:
@@ -49,14 +49,27 @@ def main(argv=None):
     parser.add_argument("-o", "--out", help="The output filename")
 
     # Add required arguments
-    parser.add_argument("-g","--gray",help="Select gray filter",action='store_true')
-    parser.add_argument("-se","--sepia",help="Select sepia filter",action='store_true')
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-g","--gray",help="Select gray filter",action='store_true')
+    group.add_argument("-se","--sepia",help="Select sepia filter",action='store_true')
     parser.add_argument("-sc","--scale", type=int , help="Scale factor to resize image")
-    parser.add_argument("-i","--implementation", choices=["python", "numba", "numpy","cython"],help="The implementation")
-
-    # parse arguments and call run_filter
+    parser.add_argument("-i","--implementation", choices=["python", "numba", "numpy","cython"],help="The implementation",required=True)
+    parser.add_argument("-r","--runtime",help="Track the average runtime",action='store_true')
     args = parser.parse_args()
-    if args.gray == True:
-        run_filter(args.file,args.out,args.implementation,"color2gray",args.scale)
-    if args.sepia == True:
-        run_filter(args.file,args.out,args.implementation,"color2sepia",args.scale)
+    # parse arguments and call run_filter
+    chosen_filter = "color2gray" if args.gray else "color2sepia"
+    
+    if args.runtime:
+        runtime_args = [args.file, args.out, args.implementation, chosen_filter]
+        if args.scale is not None:
+            runtime_args.append(args.scale)
+
+        runtime = timing.time_one(run_filter, *runtime_args)
+        if args.scale is not None:
+            print(f"Average time over 3 runs: {runtime}s")
+    else:
+        run_args = [args.file, args.out, args.implementation, chosen_filter]
+        if args.scale is not None:
+            run_args.append(args.scale)
+
+        run_filter(*run_args)
