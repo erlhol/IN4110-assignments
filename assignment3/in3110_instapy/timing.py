@@ -42,9 +42,9 @@ def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
     Args:
         filename (str): the image file to use
     """
-
     # load the image
     image = io.read_image(filename)
+    print(f"Timing performed using {filename}: {image.shape[0]}x{image.shape[1]}\n")
     # iterate through the filters
     filter_names = ["color2gray","color2sepia"]
     for filter_name in filter_names:
