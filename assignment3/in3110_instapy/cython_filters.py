@@ -28,25 +28,26 @@ def cython_color2gray(image):
     
     # The grayscale transform will have the weights 0.21, 0.72 and 0.07
     shape = gray_image.shape
-    h: C.int = shape[0]
-    w: C.int = shape[1]
-    r_weight: C.float = 0.21
-    g_weight: C.float = 0.72
-    b_weight: C.float = 0.07
+    h = shape[0]
+    w = shape[1]
+    r_weight: float64_t = 0.21
+    g_weight: float64_t = 0.72
+    b_weight: float64_t = 0.07
 
     for i in range(h):
         for j in range(w):
             pixel = gray_image[i][j]
             pixel_real = image[i][j]
-            r_p: C.int = pixel_real[0]
-            g_p: C.int = pixel_real[1]
-            b_p: C.int = pixel_real[2]
+            r_p = pixel_real[0]
+            g_p = pixel_real[1]
+            b_p = pixel_real[2]
 
-            gray_scale: C.int = int(r_p * r_weight + g_p * g_weight + b_p * b_weight)
+            gray_scale = r_p * r_weight + g_p * g_weight + b_p * b_weight
             pixel[0] = gray_scale
             pixel[1] = gray_scale
             pixel[2] = gray_scale
 
+    gray_image = gray_image.astype("uint8")
     return gray_image
 
 
@@ -59,36 +60,25 @@ def cython_color2sepia(image):
         np.array: gray_image
     """
     sepia_image = np.empty_like(image)
+    # Iterate through the pixels
+    # applying the sepia matrix
 
-    r_0: C.float = 0.393
-    r_1: C.float = 0.769
-    r_2: C.float = 0.189
+    sepia_matrix = [
+    [ 0.393, 0.769, 0.189], # R
+    [ 0.349, 0.686, 0.168], # G
+    [ 0.272, 0.534, 0.131], # B
+    ]
 
-    g_0: C.float = 0.349
-    g_1: C.float = 0.686
-    g_2: C.float = 0.168
-
-    b_0: C.float = 0.272
-    b_1: C.float = 0.534
-    b_2: C.float = 0.131
-
-    # iterate through the pixels, and apply the grayscale transform
-    
-    # The grayscale transform will have the weights 0.21, 0.72 and 0.07
     shape = sepia_image.shape
-    h: C.int = shape[0]
-    w: C.int = shape[1]
-
-    for i in range(h):
-        for j in range(w):
+    for i in range(shape[0]):
+        for j in range(shape[1]):
             pixel = sepia_image[i][j]
             pixel_real = image[i][j]
-            r_p: C.int = pixel_real[0]
-            g_p: C.int = pixel_real[1]
-            b_p: C.int = pixel_real[2]
+            pixel[0] = min(255,pixel_real[0] * sepia_matrix[0][0] + pixel_real[1] * sepia_matrix[0][1] + pixel_real[2] * sepia_matrix[0][2])
+            pixel[1] = min(255,pixel_real[0] * sepia_matrix[1][0] + pixel_real[1] * sepia_matrix[1][1] + pixel_real[2] * sepia_matrix[1][2])
+            pixel[2] = min(255,pixel_real[0] * sepia_matrix[2][0] + pixel_real[1] * sepia_matrix[2][1] + pixel_real[2] * sepia_matrix[2][2])
 
-            pixel[0] = min(255,int(r_p * r_0 + g_p * r_1 + b_p * r_2))
-            pixel[1] = min(255,int(r_p * g_0 + g_p * g_1 + b_p * g_2))
-            pixel[2] = min(255,int(r_p * b_0 + g_p * b_1 + b_p * b_2))
-
+    # Return image
+    # don't forget to make sure it's the right type!
+    sepia_image = sepia_image.astype("uint8")
     return sepia_image
