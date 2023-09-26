@@ -34,7 +34,7 @@ def time_one(filter_function: Callable, *arguments, calls: int = 3) -> float:
     return sum(times) / len(times)
 
 
-def make_reports(filename: str = "test/big.jpeg", calls: int = 3):
+def make_reports(filename: str = "test/rain.jpg", calls: int = 3):
     """
     Make timing reports for all implementations and filters,
     run for a given image.
