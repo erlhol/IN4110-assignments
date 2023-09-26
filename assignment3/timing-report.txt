@@ -1,10 +1,10 @@
 Timing performed using test/big.jpeg: 1333x2000
 
-Reference (pure Python) filter time color2gray: 6.71s (calls=3)
-Timing: numpy color2gray: 0.0195s (speedup=344.71x)
-Timing: cython color2gray: 1.21s (speedup=5.54x)
-Timing: numba color2gray: 0.109s (speedup=61.56x)
-Reference (pure Python) filter time color2sepia: 18.1s (calls=3)
-Timing: numpy color2sepia: 0.0394s (speedup=460.21x)
-Timing: cython color2sepia: 1.32s (speedup=13.73x)
-Timing: numba color2sepia: 0.333s (speedup=54.50x)
+Reference (pure Python) filter time color2gray: 6.66s (calls=3)
+Timing: numpy color2gray: 0.0163s (speedup=409.91x)
+Timing: cython color2gray: 1.2s (speedup=5.56x)
+Timing: numba color2gray: 0.111s (speedup=59.99x)
+Reference (pure Python) filter time color2sepia: 17.9s (calls=3)
+Timing: numpy color2sepia: 0.0372s (speedup=480.89x)
+Timing: cython color2sepia: 1.31s (speedup=13.60x)
+Timing: numba color2sepia: 0.301s (speedup=59.31x)
