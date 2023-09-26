@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import numpy as np
-from PIL import Image
 
 def numpy_color2gray(image: np.array) -> np.array:
     """Convert rgb pixel array to grayscale
@@ -66,8 +65,6 @@ def numpy_color2sepia(image: np.array, k: float = 1) -> np.array:
 
     # Return image (make sure it's the right type!)
     sepia_image = sepia_image.astype("uint8")
-    image = Image.fromarray(sepia_image)
-    image.show()
     return sepia_image
 
 numpy_color2sepia(np.array(Image.open("/Users/erlingholte/Documents/UiO-master/IN4110/IN3110-erlinhol/assignment3/test/tiger.jpg")),1)
