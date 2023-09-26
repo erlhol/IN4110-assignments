@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import numpy as np
+from PIL import Image
 
 def numpy_color2gray(image: np.array) -> np.array:
     """Convert rgb pixel array to grayscale
@@ -47,11 +48,11 @@ def numpy_color2sepia(image: np.array, k: float = 1) -> np.array:
     sepia_image = np.empty_like(image)
 
     # define sepia matrix (optional: with stepless sepia changes)
-    sepia_matrix = [
-    [ 0.393, 0.769, 0.189], # R
-    [ 0.349, 0.686, 0.168], # G
-    [ 0.272, 0.534, 0.131], # B
-    ]
+    sepia_matrix = np.array([
+        [ 0.393 + 0.607 * (1-k), 0.769 - 0.769 * (1-k), 0.189 - 0.189 * (1-k)],
+        [ 0.349 - 0.349 * (1-k), 0.686 + 0.314 * (1-k), 0.168 - 0.168 *(1-k) ],
+        [ 0.272 - 0.272 * (1-k), 0.534 - 0.534 *(1-k), 0.131 + 0.869 * (1-k)],
+    ])
 
     # HINT: For version without adaptive sepia filter, use the same matrix as in the pure python implementation
     # use Einstein sum to apply pixel transform matrix
@@ -65,4 +66,8 @@ def numpy_color2sepia(image: np.array, k: float = 1) -> np.array:
 
     # Return image (make sure it's the right type!)
     sepia_image = sepia_image.astype("uint8")
+    image = Image.fromarray(sepia_image)
+    image.show()
     return sepia_image
+
+numpy_color2sepia(np.array(Image.open("/Users/erlingholte/Documents/UiO-master/IN4110/IN3110-erlinhol/assignment3/test/tiger.jpg")),1)
