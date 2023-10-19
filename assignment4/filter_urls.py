@@ -25,19 +25,51 @@ def find_urls(
     Returns:
         urls (Set[str]) : set with all the urls found in html text
     """
-    raise NotImplementedError("remove me to begin task")
     # create and compile regular expression(s)
+    a_pat = re.compile(r'<a[^>]+>', flags=re.IGNORECASE)
+    href_pat = re.compile(r'href="([^"]+)"', flags=re.IGNORECASE)
+    url_set = set()
 
-    urls = ...
     # 1. find all the anchor tags, then
-    # 2. find the urls href attributes
+    urls = a_pat.findall(html)
+
+    for url in urls:
+        # 2. find the urls href attributes
+        match = href_pat.search(url)
+        if match:
+            # find the url, without #
+            stripped_pat = re.compile(r'(.*?)(#|$)', flags=re.IGNORECASE)
+            my_url_match = stripped_pat.search(match.group(1))
+
+            if my_url_match:
+                my_url = my_url_match.group(1)
+                # if the match is an empty string, it means that there is no url
+                if my_url == '':
+                    continue
+
+                # if the match conatins two // in a row, it means that it is a
+                # protocol relative url. 
+                elif len(my_url) >= 2 and (my_url[0] == '/' and my_url[1] == '/'):
+                    protocol_pat = re.compile(r'.*(?=\/\/)', flags=re.IGNORECASE)
+                    protocol_match = protocol_pat.findall(base_url)
+                    if protocol_match:
+                        url_set.add(protocol_match[0]+my_url)
+                
+                # if it is only one /, it means that is a relative url
+                elif my_url[0] == '/':
+                    url_set.add(base_url+my_url)
+                # else it is a "normal" url
+                else:
+                    url_set.add(my_url)
 
     # Write to file if requested
     if output:
         print(f"Writing to: {output}")
-        ...
+        with open(output,"w") as out_file:
+            for url in url_set:
+                out_file.write(url+"\n")
 
-    ...
+    return url_set
 
 
 def find_articles(html: str, output: str | None = None) -> set[str]:
