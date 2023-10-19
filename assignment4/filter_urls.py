@@ -80,16 +80,21 @@ def find_articles(html: str, output: str | None = None) -> set[str]:
     returns:
         - (Set[str]) : a set with urls to all the articles found
     """
-    raise NotImplementedError("remove me to begin task")
-    urls = ...
-    pattern = ...
-    articles = ...
-    ...
+    urls = find_urls(html=html,output=output)
+    pattern = re.compile(r'\bwikipedia.org\/wiki\b(?!.*:)')
+    articles = set()
+    for url in urls:
+        match = re.search(pattern,url)
+        if match:
+            articles.add(url)
+        
 
     # Write to file if wanted
     if output:
-        ...
-    ...
+        with open(output,"w") as out_file:
+            for url in articles:
+                out_file.write(url+"\n")
+    return articles
 
 
 ## Regex example
