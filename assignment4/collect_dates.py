@@ -32,7 +32,6 @@ def get_date_patterns() -> tuple[str, str, str]:
     return:
         year, month, day (tuple): Containing regular expression patterns for each field
     """
-    raise NotImplementedError("remove me to begin task")
 
     # Regex to capture days, months and years with numbers
     # year should accept a 4-digit number between at least 1000-2029
@@ -56,13 +55,13 @@ def convert_month(s: str) -> str:
     returns:
         month_number (str) : month number as zero-padded string
     """
-    raise NotImplementedError("remove me to begin task")
     # If already digit do nothing
     if s.isdigit():
-        ...
+        return s
 
     # Convert to number as string
-    ...
+    num = str(month_names.index(s) + 1)
+    return zero_pad(num)
 
 
 def zero_pad(n: str):
@@ -73,8 +72,9 @@ def zero_pad(n: str):
     You don't need to use this function,
     but you may find it useful.
     """
-    raise NotImplementedError("remove me to begin task")
-    ...
+    if len(n) == 2:
+        return n
+    return "0"+n
 
 
 def find_dates(text: str, output: str | None = None) -> list:
@@ -86,20 +86,19 @@ def find_dates(text: str, output: str | None = None) -> list:
     return:
         results (List): A list with all the dates found
     """
-    raise NotImplementedError("remove me to begin task")
     year, month, day = get_date_patterns()
 
     # Date on format YYYY/MM/DD - ISO
-    ISO = ...
+    ISO = f"{year}-{month}-{day}"
 
     # Date on format DD/MM/YYYY
-    DMY = ...
+    DMY = f"{day}\s{month}\s{year}"
 
     # Date on format MM/DD/YYYY
-    MDY = ...
+    MDY = f"{month}\s{day},\s{year}"
 
     # Date on format YYYY/MM/DD
-    YMD = ...
+    YMD = f"{year}\s{month}\s{day}"
 
     # list with all supported formats
     formats = ...
@@ -109,6 +108,8 @@ def find_dates(text: str, output: str | None = None) -> list:
     ...
     # Write to file if wanted
     if output:
-        ...
+        with open(output) as out_file:
+            for date in dates:
+                out_file.write(date+"\n")
 
     return dates
