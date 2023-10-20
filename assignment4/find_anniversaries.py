@@ -9,6 +9,9 @@ from pathlib import Path
 
 import pandas as pd
 
+from bs4 import BeautifulSoup
+import re
+
 # Month names to submit for, from Wikipedia:Selected anniversaries namespace
 months_in_namespace = [
     "January",
@@ -47,15 +50,19 @@ def extract_anniversaries(html: str, month: str) -> list[str]:
                                 '{Month} {day}: Event 1 (maybe some parentheses); Event 2; Event 3, something, something\n'
                                 {Month} can be any month in the namespace and {day} is a number 1-31
     """
-    raise NotImplementedError("remove me to begin task")
     # parse the HTML
-    soup = ...
+    soup = BeautifulSoup(html,"html.parser")
 
     # Get all the paragraphs:
-    paragraphs = ...
+    a_pat = re.compile(r'<p>(<b>)?<a href="/wiki/[^>]+>', flags=re.IGNORECASE)
+    paragraphs = soup.find_all("p")
 
     # Filter the passages to keep only the highlighted anniversaries
     ann_list = []
+    for p in paragraphs:
+        url_match = a_pat.search(str(p))
+        if url_match:
+            ann_list.append(p.text)
 
     return ann_list
 
