@@ -37,7 +37,9 @@ def get_date_patterns() -> tuple[str, str, str]:
     # year should accept a 4-digit number between at least 1000-2029
     year = r"(?P<year>\d{4})"
     # month should accept month names or month numbers
-    month = r"(?P<month>\w{1,9})"
+    expr_for_month = [rf"\b[{m[0].lower()+m[0]}]{m[1:3]}(?:{m[3:]})?\b" for m in month_names]
+    month_names_pat = "|".join(expr_for_month)
+    month = rf"(?P<month>({month_names_pat})|(\d{{1,2}}))"
     # day should be a number, which may or may not be zero-padded
     day = r"(?P<day>\d{1,2})"
 
