@@ -35,11 +35,11 @@ def get_date_patterns() -> tuple[str, str, str]:
 
     # Regex to capture days, months and years with numbers
     # year should accept a 4-digit number between at least 1000-2029
-    year = r"(?P<year>...)"
+    year = r"(?P<year>\d{4})"
     # month should accept month names or month numbers
-    month = r"(?P<month>...)"
+    month = r"(?P<month>\w{1,9})"
     # day should be a number, which may or may not be zero-padded
-    day = r"(?P<day>...)"
+    day = r"(?P<day>\d{1,2})"
 
     return year, month, day
 
