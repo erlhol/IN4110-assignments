@@ -62,7 +62,13 @@ def convert_month(s: str) -> str:
         return s
 
     # Convert to number as string
-    num = str(month_names.index(s) + 1)
+    ind = -1
+    for i in range(len(month_names)):
+        if month_names[i].lower().startswith(s.lower()):
+           ind = i
+           break 
+
+    num = str(ind + 1)
     return zero_pad(num)
 
 
@@ -94,24 +100,49 @@ def find_dates(text: str, output: str | None = None) -> list:
     ISO = f"{year}-{month}-{day}"
 
     # Date on format DD/MM/YYYY
-    DMY = f"{day}\s{month}\s{year}"
+    DMY = rf"{day}\s{month}\s{year}"
 
     # Date on format MM/DD/YYYY
-    MDY = f"{month}\s{day},\s{year}"
+    MDY = rf"{month}\s{day},\s{year}"
 
     # Date on format YYYY/MM/DD
-    YMD = f"{year}\s{month}\s{day}"
+    YMD = rf"{year}\s{month}\s{day}"
 
     # list with all supported formats
-    formats = ...
+    formats = [ISO,DMY,MDY,YMD]
     dates = []
 
     # find all dates in any format in text
-    ...
+
+    reformat_by_pattern(dates,text,ISO)
+    reformat_by_pattern(dates,text,DMY)
+    reformat_by_pattern(dates,text,MDY)
+    reformat_by_pattern(dates,text,YMD)
+
     # Write to file if wanted
     if output:
         with open(output) as out_file:
             for date in dates:
                 out_file.write(date+"\n")
 
-    return dates
+    liste = sorted(dates)
+    sorted_dates = [date for _, date in liste]
+    return sorted_dates
+
+def reformat_by_pattern(dates: list, text: str, pattern: str):
+    """Reformat all dates with the found pattern
+    arguments:
+        dates (list):  list of dates
+        text (str): the text where we retrieve dates
+        pattern (str): the pattern we are searching for
+    return:
+        None
+    """
+    matches = re.finditer(rf"{pattern}",text)
+    for match in matches:
+        if match:
+            day = zero_pad(match.group("day"))
+            month = convert_month(match.group("month"))
+            year = match.group("year")
+            date_element = f"{year}/{month}/{day}"
+            dates.append((match.start(),date_element))
