@@ -11,6 +11,7 @@ import pandas as pd
 
 from bs4 import BeautifulSoup
 import re
+import requesting_urls
 
 # Month names to submit for, from Wikipedia:Selected anniversaries namespace
 months_in_namespace = [
@@ -28,7 +29,7 @@ months_in_namespace = [
     "December",
 ]
 
-# TODO: fix the month
+
 def extract_anniversaries(html: str, month: str) -> list[str]:
     """Extract all the passages from the html which contain an anniversary, and save their plain text in a list.
         For the pages in the given namespace, all the relevant passages start with a month href
@@ -86,7 +87,7 @@ def anniversary_list_to_df(ann_list: list[str]) -> pd.DataFrame:
     colon_pat = r": (?![^()]*\))"
     semicolon_pat = r";(?![^()]*\))"
     for ann in ann_list:
-        splitting = re.split(colon_pat,ann) # if noe events, ignore
+        splitting = re.split(colon_pat,ann.strip()) # if noe events, ignore
         if len(splitting) == 2:
             date, events = splitting
             events = re.split(semicolon_pat,events)
@@ -130,25 +131,28 @@ def anniversary_table(
 
     work_dir = Path(work_dir)
     output_dir = work_dir / "tables_of_anniversaries"
+    output_dir.mkdir(exist_ok=True)
 
     for month in month_list:
-        page_url = ...
-        html = ...
+        page_url = f"{namespace_url}{month}"
+        html = requesting_urls.get_html(page_url)
         # Get the list of anniversaries
-        ann_list = ...
+        ann_list = extract_anniversaries(html,month)
 
         # Render to a dataframe
-        df = ...
+        df = anniversary_list_to_df(ann_list)
 
         # Convert to an .md table
-        table = ...
+        table = df.to_markdown(index=False)
 
         # Save the output
-        ...
+        new_file = open(output_dir / Path(f'anniversaries_{month}.md'),"w")
+        new_file.write(table)
+        new_file.close()
 
 
 if __name__ == "__main__":
     # make tables for all the months
-    work_dir = ...
+    work_dir = Path(__file__).parent
     namespace_url = "https://en.wikipedia.org/wiki/Wikipedia:Selected_anniversaries/"
-    ...
+    anniversary_table(namespace_url,months_in_namespace,work_dir)
