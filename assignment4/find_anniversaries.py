@@ -78,13 +78,31 @@ def anniversary_list_to_df(ann_list: list[str]) -> pd.DataFrame:
     Returns:
         df (pd.Dataframe): A (dense) dataframe with columns ["Date"] and ["Event"] where each row represents a single event
     """
-    raise NotImplementedError("remove me to begin task")
 
     # Store the split parts of the string as a table
     ann_table = ...
+    date_list = []
+    event_list = []
+    colon_pat = r": (?![^()]*\))"
+    semicolon_pat = r";(?![^()]*\))"
+    for ann in ann_list:
+        splitting = re.split(colon_pat,ann) # if noe events, ignore
+        if len(splitting) == 2:
+            date, events = splitting
+            events = re.split(semicolon_pat,events)
+            # if there are no events:
+            if events and events[0] == '':
+                continue
+            for event in events:
+                date_list.append(date)
+                event_list.append(event.strip())
+
     # Headers for the dataframe
     headers = ["Date", "Event"]
-    df = ...
+    df = pd.DataFrame({
+        "Date": date_list,
+        "Event": event_list
+    })
     return df
 
 
