@@ -28,7 +28,7 @@ months_in_namespace = [
     "December",
 ]
 
-
+# TODO: fix the month
 def extract_anniversaries(html: str, month: str) -> list[str]:
     """Extract all the passages from the html which contain an anniversary, and save their plain text in a list.
         For the pages in the given namespace, all the relevant passages start with a month href
@@ -54,7 +54,7 @@ def extract_anniversaries(html: str, month: str) -> list[str]:
     soup = BeautifulSoup(html,"html.parser")
 
     # Get all the paragraphs:
-    a_pat = re.compile(r'<p>(<b>)?<a href="/wiki/[^>]+>', flags=re.IGNORECASE)
+    a_pat = re.compile(rf'<p>(<b>)?<a href="/wiki/{month}_\d{{1,2}}"[^>]+>', flags=re.IGNORECASE)
     paragraphs = soup.find_all("p")
 
     # Filter the passages to keep only the highlighted anniversaries
@@ -120,7 +120,6 @@ def anniversary_table(
     Returns:
         None
     """
-    raise NotImplementedError("remove me to begin task")
 
     # Loop through all months in month_list
     # Extract the html from the url (use one of the already defined functions from earlier)
