@@ -7,6 +7,8 @@ collecting olympic statistics from wikipedia
 from __future__ import annotations
 
 from pathlib import Path
+import requesting_urls
+from bs4 import BeautifulSoup
 
 
 # Countries to submit statistics for
@@ -82,20 +84,23 @@ def get_scandi_stats(
 
         with the tree keys "Norway", "Denmark", "Sweden".
     """
-    raise NotImplementedError("remove me to begin task")
 
-    html = ...
-    soup = ...
-    table = ...
+    html = requesting_urls.get_html(url)
+    soup = BeautifulSoup(html,"html.parser")
+    table = soup.find('span', id='List_of_NOCs_with_medals_(sortable_&_unranked)').find_next('table')
     base_url = "https://en.wikipedia.org"
 
-    rows = ...
+    rows = table.find_all('a',string=scandinavian_countries)
 
     country_dict: dict[str, dict[str, str | dict[str, int]]] = {}
 
     for row in rows:
-        cols = ...
-        ...
+        country = row.string
+        country_url = row.get('href')
+        row = row.find_parent('tr')
+        cols = row.find_all('td')
+        info_dict = {'url': base_url+country_url, 'medals': {'Summer': int(cols[2].string), 'Winter': int(cols[7].string)} }
+        country_dict[country] = info_dict
 
     return country_dict
 
