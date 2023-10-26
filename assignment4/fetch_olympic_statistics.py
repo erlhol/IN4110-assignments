@@ -10,6 +10,7 @@ from pathlib import Path
 import requesting_urls
 from bs4 import BeautifulSoup
 import re
+from itertools import groupby
 
 # Countries to submit statistics for
 scandinavian_countries = ["Norway", "Sweden", "Denmark"]
@@ -160,7 +161,6 @@ def find_best_country_in_sport(
                        If two countries lead return their names separated with '/' like 'Norway/Sweden'
                        If all or none of the countries lead, return string 'None'
     """
-    raise NotImplementedError("remove me to begin task")
     valid_medals = {"Gold", "Silver", "Bronze"}
     if medal not in valid_medals:
         raise ValueError(
@@ -168,10 +168,24 @@ def find_best_country_in_sport(
         )
 
     # Get the requested medals and determine the best
-    best = ...
+    best = sorted([(v[medal], k) for k, v in results.items()],reverse=True)
 
-    ...
-    return best
+    # group into countries with the same number of medals
+    grouped_best = [list(items) for _,items in groupby(best, key=lambda x: x[0])]
+   
+    # If just one group: meaning that they are equal in rank:
+    if len(grouped_best) == 1:
+        return "None"
+    
+    # else: there are different groups
+    str_to_return = ""
+    for country_and_medal in grouped_best[0]:
+        if str_to_return != "":
+            str_to_return += "/" + country_and_medal[1]
+        else:
+            str_to_return += country_and_medal[1]
+
+    return str_to_return
 
 
 # Define your own plotting functions and optional helper functions
