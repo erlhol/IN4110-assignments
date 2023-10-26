@@ -9,7 +9,7 @@ from __future__ import annotations
 from pathlib import Path
 import requesting_urls
 from bs4 import BeautifulSoup
-
+import re
 
 # Countries to submit statistics for
 scandinavian_countries = ["Norway", "Sweden", "Denmark"]
@@ -118,10 +118,10 @@ def get_sport_stats(country_url: str, sport: str) -> dict[str, int]:
                           Format:
                           {"Gold" : x, "Silver" : y, "Bronze" : z}
     """
-    raise NotImplementedError("remove me to begin task")
-    html = ...
-    soup = ...
-    table = ...
+    html = requesting_urls.get_html(country_url)
+    soup = BeautifulSoup(html,'html.parser')
+    pattern = re.compile(r'medals_by_summer_sport', re.IGNORECASE)
+    table = soup.find('span', id=pattern).find_next('table')
 
     medals = {
         "Gold": 0,
@@ -129,10 +129,14 @@ def get_sport_stats(country_url: str, sport: str) -> dict[str, int]:
         "Bronze": 0,
     }
 
-    rows = ...
+    rows = table.find_all('a',string=sport)
 
     for row in rows:
-        ...
+        row = row.find_parent('tr')
+        cols = row.find_all('td')
+        medals["Gold"] = int(cols[0].string)
+        medals["Silver"] = int(cols[1].string)
+        medals["Bronze"] = int(cols[2].string)
     return medals
 
 
