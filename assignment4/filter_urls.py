@@ -28,6 +28,8 @@ def find_urls(
     # create and compile regular expression(s)
     a_pat = re.compile(r'<a[^>]+>', flags=re.IGNORECASE)
     href_pat = re.compile(r'href="([^"]+)"', flags=re.IGNORECASE)
+    stripped_pat = re.compile(r'(.*?)(#|$)', flags=re.IGNORECASE)
+    protocol_pat = re.compile(r'.*(?=\/\/)', flags=re.IGNORECASE)
     url_set = set()
 
     # 1. find all the anchor tags, then
@@ -38,7 +40,6 @@ def find_urls(
         match = href_pat.search(url)
         if match:
             # find the url, without #
-            stripped_pat = re.compile(r'(.*?)(#|$)', flags=re.IGNORECASE)
             my_url_match = stripped_pat.search(match.group(1))
 
             if my_url_match:
@@ -50,7 +51,6 @@ def find_urls(
                 # if the match conatins two // in a row, it means that it is a
                 # protocol relative url. 
                 elif len(my_url) >= 2 and (my_url[0] == '/' and my_url[1] == '/'):
-                    protocol_pat = re.compile(r'.*(?=\/\/)', flags=re.IGNORECASE)
                     protocol_match = protocol_pat.findall(base_url)
                     if protocol_match:
                         url_set.add(protocol_match[0]+my_url)
@@ -71,6 +71,24 @@ def find_urls(
 
     return url_set
 
+def find_all_articles(html: str, language: str, output: str | None = None) -> set[str]:
+    """Finds all the wiki articles inside a html text. Make call to find urls, and filter
+    arguments:
+        - text (str) : the html text to parse
+        - output (str, optional): the file to write the output to if wanted
+    returns:
+        - (Set[str]) : a set with urls to all the articles found
+    """
+    urls = find_urls(html=html,output=output)
+    pattern = re.compile(rf'\b{language}wikipedia.org\/wiki\b(?!.*:)')
+    articles = {url for url in urls if pattern.search(url)}
+
+    # Write to file if wanted
+    if output:
+        with open(output,"w") as out_file:
+            for url in articles:
+                out_file.write(url+"\n")
+    return articles
 
 def find_articles(html: str, output: str | None = None) -> set[str]:
     """Finds all the wiki articles inside a html text. Make call to find urls, and filter
@@ -80,21 +98,18 @@ def find_articles(html: str, output: str | None = None) -> set[str]:
     returns:
         - (Set[str]) : a set with urls to all the articles found
     """
-    urls = find_urls(html=html,output=output)
-    pattern = re.compile(r'\bwikipedia.org\/wiki\b(?!.*:)')
-    articles = set()
-    for url in urls:
-        match = re.search(pattern,url)
-        if match:
-            articles.add(url)
-        
+    return find_all_articles(html,"",output)
 
-    # Write to file if wanted
-    if output:
-        with open(output,"w") as out_file:
-            for url in articles:
-                out_file.write(url+"\n")
-    return articles
+
+def find_english_articles(html: str, output: str | None = None) -> set[str]:
+    """Finds all the wiki articles inside a html text. Make call to find urls, and filter
+    arguments:
+        - text (str) : the html text to parse
+        - output (str, optional): the file to write the output to if wanted
+    returns:
+        - (Set[str]) : a set with urls to all the articles found
+    """
+    return find_all_articles(html,"en.",output)
 
 
 ## Regex example

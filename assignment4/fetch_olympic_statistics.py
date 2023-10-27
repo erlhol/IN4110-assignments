@@ -11,6 +11,9 @@ import requesting_urls
 from bs4 import BeautifulSoup
 import re
 from itertools import groupby
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 # Countries to submit statistics for
 scandinavian_countries = ["Norway", "Sweden", "Denmark"]
@@ -44,13 +47,13 @@ def report_scandi_stats(url: str, sports_list: list[str], work_dir: str | Path) 
     # Plot the sport specific stats
     # Make a call to find_best_country_in_sport for each sport
     # Create and save the md table of best in each sport stats
-    raise NotImplementedError("remove me to begin task")
 
     work_dir = Path(work_dir)
-    country_dict = ...
+    country_dict = get_scandi_stats(url)
 
     stats_dir = work_dir / "olympic_games_results"
-    ...
+    stats_dir.mkdir(exist_ok=True)
+    plot_scandi_stats(country_dict,stats_dir)
 
     best_in_sport = []
     # Valid values for medal ["Gold" | "Silver" |"Bronze"]
@@ -58,7 +61,19 @@ def report_scandi_stats(url: str, sports_list: list[str], work_dir: str | Path) 
 
     for sport in sports_list:
         results: dict[str, dict[str, int]] = {}
-        ...
+        for country in country_dict:
+            results[country] = get_sport_stats(country_dict[country]["url"],sport)
+        
+        # Plot here based on results.
+        plot_sport_specific_stats(results,sport,stats_dir)
+        # Write best_country by sport to file
+        best_country = find_best_country_in_sport(results)
+        best_in_sport.append(best_country)
+
+    best_countries = best_sports_to_md(sports_list,best_in_sport)
+    out_file = open(stats_dir / 'best_of_sport_by_Gold.md',"w")
+    out_file.write(best_countries)
+    out_file.close() 
 
 
 def get_scandi_stats(
@@ -172,7 +187,7 @@ def find_best_country_in_sport(
 
     # group into countries with the same number of medals
     grouped_best = [list(items) for _,items in groupby(best, key=lambda x: x[0])]
-   
+
     # If just one group: meaning that they are equal in rank:
     if len(grouped_best) == 1:
         return "None"
@@ -187,9 +202,59 @@ def find_best_country_in_sport(
 
     return str_to_return
 
+def best_sports_to_md(sports_list, best_countries):
+    df = pd.DataFrame({
+        "Sport": sports_list,
+        "Best country":best_countries
+    })
+    text = "Best Scandinavian country in Summer Olympic sports, based on most number of Gold medals\n"
+    return text+df.to_markdown(index=False)
+
 
 # Define your own plotting functions and optional helper functions
+def plot_sport_specific_stats(
+    results: dict[str, dict[str, int]], 
+    sport: str,
+    output_parent: str | Path | None = None 
+) -> None:
+    """Plot the number of gold, silver and bronze medals for the scandinavian countries.
 
+    Parameters:
+      results (dict[str, dict[str, int]]) : a nested dictionary of country names and the corresponding number of summer and winter
+                            gold medals from 'List of NOCs with medals' table.
+                            Format:
+                            {"country_name": {"Gold" : x, "Silver" : y, "Bronze": z}}
+      output_parent (str | Path) : parent file path to save the plot in
+    Returns:
+      None
+    """
+    
+    countries_list = list(results.keys())
+    medals = list(results[countries_list[0]].keys()) # the types of medals
+    num_countries = len(countries_list)
+    num_medals = len(medals)
+
+    bar_width = 0.2
+    index = np.arange(num_countries)
+
+    colors = {'Gold': 'gold', 'Silver': 'silver', 'Bronze': 'brown'}
+
+    for i in range(num_medals):
+        medal_counts = [results[country][medals[i]] for country in countries_list]
+        bars = plt.bar(index + i * bar_width, medal_counts, bar_width,
+                label=medals[i],color=colors[medals[i]])
+        plt.bar_label(bars)
+
+    plt.xlabel('Countries')
+    plt.ylabel('Number of Medals in '+sport)
+    plt.xticks(index, countries_list)
+
+    plt.title(f"Number of medals in {sport} for scandinavian countries in summer Olympic Games")
+    # save the figure to a file
+    filename = Path(output_parent) / Path(f"{sport}_medal_ranking.png")
+    plt.savefig(filename)
+    plt.clf()
+    
 
 def plot_scandi_stats(
     country_dict: dict[str, dict[str, str | dict[str, int]]],
@@ -206,12 +271,35 @@ def plot_scandi_stats(
     Returns:
       None
     """
-    raise NotImplementedError("remove me to begin task")
-    ...
+    countries_list = list(country_dict.keys())
+    branches = list(country_dict[countries_list[0]]['medals'].keys()) # summer or winter olympics
+    num_countries = len(countries_list)
+    num_branches = len(branches)
+
+    bar_width = 0.2
+    index = np.arange(num_countries)
+
+    colors = {'Summer': 'red', 'Winter': 'blue'}
+
+    for i in range(num_branches):
+        medal_counts = [country_dict[country]['medals'][branches[i]] for country in countries_list]
+        bars = plt.bar(index + i * bar_width, medal_counts, bar_width,
+                label=branches[i],color=colors[branches[i]])
+        plt.bar_label(bars)
+
+    plt.xlabel('Countries')
+    plt.ylabel('Number of Medals')
+    plt.xticks(index, countries_list)
+
+    plt.title("Number of gold medals for scandinavian countries in Olympic Games")
+    # save the figure to a file
+    filename = Path(output_parent) / Path("total_medal_ranking.png")
+    plt.savefig(filename)
+    plt.clf()
 
 
 # run the whole thing if called as a script, for quick testing
 if __name__ == "__main__":
     url = "https://en.wikipedia.org/wiki/All-time_Olympic_Games_medal_table"
-    work_dir = ...
+    work_dir = Path(__file__).parent
     report_scandi_stats(url, summer_sports, work_dir)
