@@ -29,8 +29,11 @@ warnings.filterwarnings("ignore", ".*convert_dtype.*", FutureWarning)
 def fetch_day_prices(date: datetime.date = None, location: str = "NO1") -> pd.DataFrame:
     """Fetch one day of data for one location from hvakosterstrommen.no API
 
-    Make sure to document arguments and return value...
-    ...
+    arguments:
+        date (datetime.date, optional) : the day to fetch prices for
+        location (str, optional) : the location to fetch prices for
+    returns:
+        df (pd.DataFrame) : A pandas dataframe with the prices for the given date and location
     """
     if date is None:
         date = datetime.datetime.now()
@@ -84,8 +87,12 @@ def fetch_prices(
 ) -> pd.DataFrame:
     """Fetch prices for multiple days and locations into a single DataFrame
 
-    Make sure to document arguments and return value...
-    ...
+    arguments:
+        end_date (datetime.date, optional) : the last day to fetch prices for
+        days (int, optional) : number of days since end_date to fetch prices for
+        locations (list[str], optional) : the locations to fetch prices for
+    returns:
+        df (pd.DataFrame) : A pandas dataframe with the prices for the period defined by end_date and days at the locations specified
     """
 
     if end_date is None:
@@ -116,9 +123,11 @@ def plot_prices(df: pd.DataFrame) -> alt.Chart:
     y-axis should be price in NOK
     each location should get its own line
 
-    Make sure to document arguments and return value...
+    arguments:
+        df (pd.DataFrame) : A DataFrame with prices
+    returns:
+        chart (alt.chart) : A chart displaying the prices of the DataFrame
     """
-    # TODO!
     return (
         alt.Chart(df)
         .mark_line()
@@ -164,11 +173,13 @@ def plot_activity_prices(
     ...
 
 
-def zero_pad(n: str):
-    """zero-pad a number string
+def zero_pad(n: str) -> str:
+    """zero-pad a number string - turns '2' into '02'
 
-    turns '2' into '02'
-
+    arguments:
+        n (str) : A string (representing a number) that may or may not be zero padded
+    returns:
+        string (str) : A string that is zero-padded
     """
     if len(n) == 2:
         return n
