@@ -20,7 +20,10 @@ from strompris import (
 )
 
 app = FastAPI()
-templates = ...
+templates_directory = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "templates"
+)
+templates = Jinja2Templates(directory=templates_directory)
 
 
 # `GET /` should render the `strompris.html` template
@@ -30,7 +33,9 @@ templates = ...
 # - today: current date
 
 
-...
+@app.get("/")
+def strompris(request: Request):
+    return templates.TemplateResponse("strompris.html", {"request": request})
 
 
 # GET /plot_prices.json should take inputs:
@@ -43,7 +48,11 @@ templates = ...
 # (task 5.6: return chart stacked with plot_daily_prices)
 
 
-...
+@app.get("/plot_prices.json")
+def get_plot_prices():
+    df = fetch_prices()
+    return plot_prices(df).to_dict()
+
 
 # Task 5.6 (bonus):
 # `GET /activity` should render the `activity.html` template
@@ -77,7 +86,9 @@ templates = ...
 def main():
     """Launches the application on port 5000 with uvicorn"""
     # use uvicorn to launch your application on port 5000
-    ...
+    import uvicorn
+
+    uvicorn.run(app, host="127.0.0.1", port=5000)
 
 
 if __name__ == "__main__":

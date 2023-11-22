@@ -51,13 +51,15 @@
   <body>
     <!-- Add Navigation Bar with links to docs (both FastAPI and your sphinx docs)
     -->
-
+    <h1>Electricity prices in Norway</h1>
+    <p>Last 7 days</p>
     <div id="vis"></div>
     <!-- Create Form -->
     <form action="javascript:refreshPlot()" id="price-form">
       <!--
       -->
     </form>
+    <span>Data retrieved from <a href="https://www.hvakosterstrommen.no/strompris-api">https://www.hvakosterstrommen.no/strompris-api</a></span>
 
     <script type="text/javascript">
       async function refreshPlot() {
