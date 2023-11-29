@@ -52,13 +52,22 @@
     <!-- Add Navigation Bar with links to docs (both FastAPI and your sphinx docs)
     -->
     <h1>Electricity prices in Norway</h1>
-    <p>Last 7 days</p>
     <div id="vis"></div>
     <!-- Create Form -->
     <form action="javascript:refreshPlot()" id="price-form">
-      <!--
-      -->
+      {% for code,location in locations %}
+      <label>
+        <input type="checkbox" name="locations" value="{{ code }}" checked/>
+        {{ location }}
+      </label>
+      <br />
+      {% endfor %}
+      <span>End date: <input type="date" id="date" name="end" value="{{ today }}"></span>
+      <p></p>
+      <span>Days: <input type="number" id="number" name="days" value="7"></span>
+      <button type="submit">Refresh</button>
     </form>
+    <p></p>
     <span>Data retrieved from <a href="https://www.hvakosterstrommen.no/strompris-api">https://www.hvakosterstrommen.no/strompris-api</a></span>
 
     <script type="text/javascript">

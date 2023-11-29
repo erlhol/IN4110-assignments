@@ -35,7 +35,14 @@ templates = Jinja2Templates(directory=templates_directory)
 
 @app.get("/")
 def strompris(request: Request):
-    return templates.TemplateResponse("strompris.html", {"request": request})
+    return templates.TemplateResponse(
+        "strompris.html",
+        {
+            "request": request,
+            "locations": LOCATION_CODES.items(),
+            "today": datetime.datetime.now().strftime("%Y-%m-%d"),
+        },
+    )
 
 
 # GET /plot_prices.json should take inputs:
@@ -49,8 +56,10 @@ def strompris(request: Request):
 
 
 @app.get("/plot_prices.json")
-def get_plot_prices():
-    df = fetch_prices()
+def get_plot_prices(
+    end: datetime.date, days: int, locations: Optional[List[str]] = Query(default=None)
+):
+    df = fetch_prices(locations=locations, end_date=end, days=days)
     return plot_prices(df).to_dict()
 
 
