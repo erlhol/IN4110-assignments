@@ -57,7 +57,7 @@ def fetch_day_prices(date: datetime.date = None, location: str = "NO1") -> pd.Da
     df = pd.DataFrame.from_dict(data)
 
     # Filter out to only include NOK_per_kWh and time_start
-    df = df[["NOK_per_kWh", "time_start"]]
+    df = df[["NOK_per_kWh", "EUR_per_kWh", "time_start"]]
 
     # Convert to correct timezone (from write-up)
     df["time_start"] = pd.to_datetime(df["time_start"], utc=True).dt.tz_convert(
@@ -65,6 +65,15 @@ def fetch_day_prices(date: datetime.date = None, location: str = "NO1") -> pd.Da
     )
     # Convert to float if not already
     df["NOK_per_kWh"] = df["NOK_per_kWh"].astype("float")
+
+    # Add additional fields for IN4110
+    df["EUR_per_kWh"] = df["EUR_per_kWh"].astype("float")
+
+    # extra data for IN4110
+    df["hourly change"] = (df["NOK_per_kWh"].diff() / df["NOK_per_kWh"]).map(
+        lambda x: f"{x:.2%}"
+    )
+
     return df
 
 
@@ -100,16 +109,37 @@ def fetch_prices(
 
     total_df = None
     # traverse in reverse order, from the oldest to the most recent day
+    day_count = 0
     for n in range(days - 1, -1, -1):
         for location in locations:
             td = end_date - datetime.timedelta(n)
             df = fetch_day_prices(td, location)
             df["location_code"] = location
             df["location"] = LOCATION_CODES[location]
+
+            # Find the 24h difference
+            # Ignore the first day
+            if day_count != 0:
+                prev_td = end_date - datetime.timedelta(n + 1)
+                prev_df = fetch_day_prices(prev_td, location)
+
+            # Find the 7d difference
+            # Only when we have data
+            if day_count >= 7:
+                prev_td = end_date - datetime.timedelta(n + 7)
+                prev_df = fetch_day_prices(prev_td, location)
+                df["7d change"] = (
+                    (df["NOK_per_kWh"] - prev_df["NOK_per_kWh"]) / df["NOK_per_kWh"]
+                ).map(lambda x: f"{x:.2%}")
+
             if total_df is None:
                 total_df = df
+                day_count += 1
                 continue
             total_df = pd.concat([total_df, df])
+
+        day_count += 1
+
     return total_df
 
 
@@ -131,7 +161,20 @@ def plot_prices(df: pd.DataFrame) -> alt.Chart:
     return (
         alt.Chart(df)
         .mark_line()
-        .encode(x="time_start", y="NOK_per_kWh", color="location")
+        .encode(
+            x="time_start",
+            y="NOK_per_kWh",
+            color="location",
+            tooltip=[
+                "time_start",
+                "location",
+                "NOK_per_kWh",
+                "EUR_per_kWh",
+                "hourly change",
+                "24h change",
+                "7d change",
+            ],
+        )
     )
 
 
@@ -148,7 +191,7 @@ def plot_daily_prices(df: pd.DataFrame) -> alt.Chart:
 
     Make sure to document arguments and return value...
     """
-    ...
+    return  # The compound chart
 
 
 # Task 5.6
