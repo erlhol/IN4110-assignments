@@ -122,6 +122,9 @@ def fetch_prices(
             if day_count != 0:
                 prev_td = end_date - datetime.timedelta(n + 1)
                 prev_df = fetch_day_prices(prev_td, location)
+                df["24h change"] = (
+                    (df["NOK_per_kWh"] - prev_df["NOK_per_kWh"]) / df["NOK_per_kWh"]
+                ).map(lambda x: f"{x:.2%}")
 
             # Find the 7d difference
             # Only when we have data
