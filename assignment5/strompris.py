@@ -194,6 +194,7 @@ def plot_daily_prices(df: pd.DataFrame) -> alt.Chart:
 
     Make sure to document arguments and return value...
     """
+    raise NotImplementedError("Remove me when you implemnt this optional task")
     return  # The compound chart
 
 
