@@ -24,7 +24,9 @@ templates_directory = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "templates"
 )
 templates = Jinja2Templates(directory=templates_directory)
-docs_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs")
+docs_directory = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "docs/_build/html"
+)
 
 
 # `GET /` should render the `strompris.html` template
